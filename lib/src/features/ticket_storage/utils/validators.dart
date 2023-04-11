@@ -39,7 +39,7 @@ String? checkFileUrl(
   String? emptyLengthMessage,
   int minLength = 10,
   String? minLengthMessage,
-  int maxLength = 100,
+  int maxLength = 400,
   String? maxLengthMessage,
   bool validateByRegExp = true,
   String? linkMessage,

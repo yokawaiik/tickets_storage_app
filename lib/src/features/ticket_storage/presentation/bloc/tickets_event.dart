@@ -4,31 +4,27 @@ part of 'tickets_bloc.dart';
 abstract class TicketsEvent {}
 
 class AddTicketEvent implements TicketsEvent {
-  // final String name;
   final String fileUrl;
 
   AddTicketEvent({
-    // required this.name,
     required this.fileUrl,
   });
 }
 
 class GetTicketsEvent implements TicketsEvent {
-  final int limit;
-  final int offset;
-
-  GetTicketsEvent({
-    required this.limit,
-    required this.offset,
-  });
+  final bool inital;
+  GetTicketsEvent({this.inital = false});
 }
 
-class RefreshTicketsEvent implements TicketsEvent {}
+class RefreshTicketsEvent implements TicketsEvent {
+  final Completer? completer;
+  RefreshTicketsEvent(this.completer);
+}
 
-class DownloadTicketEvent implements TicketsEvent {
+class DownloadSingleTicketEvent implements TicketsEvent {
   final Ticket ticket;
 
-  DownloadTicketEvent({required this.ticket});
+  DownloadSingleTicketEvent({required this.ticket});
 }
 
 class DeletedTicketEvent implements TicketsEvent {
@@ -38,7 +34,7 @@ class DeletedTicketEvent implements TicketsEvent {
 }
 
 class DeletedGroupTicketsEvent implements TicketsEvent {
-  final List<String> idList;
+  final List<Ticket> tickets;
 
-  DeletedGroupTicketsEvent({required this.idList});
+  DeletedGroupTicketsEvent({required this.tickets});
 }

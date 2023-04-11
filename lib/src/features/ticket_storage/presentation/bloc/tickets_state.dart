@@ -1,70 +1,62 @@
 part of 'tickets_bloc.dart';
 
 @immutable
-abstract class TicketsState extends Equatable {
-  final List<Ticket> ticketList = [];
+abstract class TicketsState extends Equatable {}
+
+class InitialTicketsState extends TicketsState {
+  @override
+  List<Object?> get props => [];
 }
 
-class TicketsInitialState extends TicketsState {
-  @override
-  final List<Ticket> ticketList = [];
+class LoadedTicketsState extends TicketsState {
+  final List<Ticket> loadedTickets;
+
+  LoadedTicketsState(this.loadedTickets);
 
   @override
-  List<Object?> get props => [ticketList];
+  List<Object?> get props => [loadedTickets];
 }
 
-class TicketsLoadedState extends TicketsState {
-  @override
-  final List<Ticket> ticketList;
+class AddedSingleTicketsState extends TicketsState {
+  final Ticket ticket;
 
-  TicketsLoadedState(this.ticketList);
+  AddedSingleTicketsState(this.ticket);
 
   @override
-  List<Object?> get props => [ticketList];
+  List<Object?> get props => [ticket];
 }
 
-class TicketsAddedState extends TicketsState {
-  @override
-  final List<Ticket> ticketList;
+class RemovedSingleTicketsState extends TicketsState {
+  final Ticket removedTicket;
 
-  TicketsAddedState(this.ticketList);
+  RemovedSingleTicketsState(this.removedTicket);
 
   @override
-  List<Object?> get props => [ticketList];
+  List<Object?> get props => [removedTicket];
 }
 
-class TicketsRemovedState extends TicketsState {
-  @override
-  final List<Ticket> ticketList;
+class RemovedGroupTicketsState extends TicketsState {
+  final List<Ticket> deletedTickets;
 
-  TicketsRemovedState(this.ticketList);
+  RemovedGroupTicketsState(this.deletedTickets);
 
   @override
-  List<Object?> get props => [ticketList];
+  List<Object?> get props => [deletedTickets];
 }
 
-class RemovedTicketState extends TicketsState {
-  final Ticket deletedTicket;
-
-  RemovedTicketState(this.deletedTicket);
-
-  @override
-  List<Object?> get props => [deletedTicket];
-}
-
-class TicketsErrorState extends TicketsState {
+class ErrorTicketsState extends TicketsState {
   final Object? error;
 
-  TicketsErrorState(this.error);
+  ErrorTicketsState([this.error = "Something went wrong."]);
 
   @override
   List<Object?> get props => [error];
 }
 
-class DownloadTicketState extends TicketsState {
+class DownloadSingleTicketsState extends TicketsState {
   final Ticket? ticket;
 
-  DownloadTicketState(this.ticket);
+  DownloadSingleTicketsState(this.ticket);
 
   @override
   List<Object?> get props => [ticket];

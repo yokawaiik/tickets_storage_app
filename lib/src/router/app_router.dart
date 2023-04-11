@@ -27,9 +27,7 @@ class AppRouter {
           //   );
           // },
           builder: (context, goRouterState) {
-            return TicketStoragePage(
-              ticketsBloc: GetIt.I.get<TicketsBloc>(),
-            );
+            return TicketStoragePage();
           },
         ),
         // GoRoute(

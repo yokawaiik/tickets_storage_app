@@ -1,38 +1,81 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../bloc/tickets_bloc.dart';
 import '../widgets/widgets.dart';
 import '../../utils/utils.dart' as utils;
 
-class TicketStoragePage extends StatelessWidget {
-  final TicketsBloc ticketsBloc;
-
-  final ticketUrlTextFieldController = TextEditingController();
-  final _addFormKey = GlobalKey<FormState>();
-
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
-
-  TicketStoragePage({
+class TicketStoragePage extends StatefulWidget {
+  const TicketStoragePage({
     Key? key,
-    required this.ticketsBloc,
   }) : super(key: key);
+
+  @override
+  State<TicketStoragePage> createState() => _TicketStoragePageState();
+}
+
+class _TicketStoragePageState extends State<TicketStoragePage> {
+  // final TicketsBloc ticketsBloc = GetIt.I.get<TicketsBloc>();
+
+  // final _ticketUrlTextFieldController = TextEditingController();
+
+  // final _addFormKey = GlobalKey<FormState>();
+
+  // final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+  //     GlobalKey<ScaffoldMessengerState>();
+
+  // ScrollController _scrollController = new ScrollController();
+  late final TicketsBloc _ticketsBloc;
+  late final TextEditingController _ticketUrlTextFieldController;
+  late final GlobalKey<FormState> _addFormKey;
+  late final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey;
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    _ticketsBloc = GetIt.I.get<TicketsBloc>();
+    _ticketUrlTextFieldController = TextEditingController();
+    _addFormKey = GlobalKey<FormState>();
+    _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+    _scrollController = ScrollController();
+
+    _scrollController.addListener(() async {
+      if (_scrollController.position.pixels ==
+          _scrollController.position.maxScrollExtent) {
+        if (_ticketsBloc.tickets.length != _ticketsBloc.totalCountTickets) {
+          _ticketsBloc.add(GetTicketsEvent());
+        }
+      }
+    });
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _ticketsBloc.close();
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<TicketsBloc, TicketsState>(
-      bloc: ticketsBloc,
+      bloc: _ticketsBloc,
       listener: (context, state) {
         late final String message;
-        if (state is TicketsErrorState) {
+
+        if (state is ErrorTicketsState) {
           message = state.error.toString();
-        } else if (state is RemovedTicketState) {
-          message = "Was deleted: ${state.deletedTicket.fileUrl}";
+        } else if (state is RemovedSingleTicketsState) {
+          message = "Was deleted: ${state.removedTicket.fileUrl}";
         } else {
-          message = "Something went wrong";
+          message = "Something went wrong.";
         }
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -44,7 +87,8 @@ class TicketStoragePage extends StatelessWidget {
         );
       },
       listenWhen: (previous, current) {
-        if (current is TicketsErrorState || current is RemovedTicketState) {
+        if (current is ErrorTicketsState ||
+            current is RemovedSingleTicketsState) {
           return true;
         }
         return false;
@@ -55,49 +99,79 @@ class TicketStoragePage extends StatelessWidget {
         appBar: AppBar(
           title: const Text("Хранение билетов"),
         ),
-        body: BlocBuilder<TicketsBloc, TicketsState>(
-          bloc: ticketsBloc..add(GetTicketsEvent(limit: 10, offset: 0)),
-          buildWhen: (previous, current) {
-            if (current is TicketsAddedState ||
-                current is TicketsRemovedState ||
-                current is TicketsLoadedState ||
-                current is RefreshTicketsEvent) {
-              return true;
-            }
-            return false;
-          },
-          builder: (context, state) {
-            if (state.ticketList.isEmpty) {
-              return const Center(
-                child: Text("Здесь пока ничего нет"),
-              );
-            }
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+          child: BlocBuilder<TicketsBloc, TicketsState>(
+            bloc: _ticketsBloc..add(GetTicketsEvent(inital: true)),
+            buildWhen: (previous, current) {
+              if (previous == current) return false;
+              if (current is AddedSingleTicketsState ||
+                  current is RemovedSingleTicketsState ||
+                  current is RemovedGroupTicketsState ||
+                  current is LoadedTicketsState) {
+                return true;
+              }
+              return false;
+            },
+            builder: (context, state) {
+              if (state is InitialTicketsState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
 
-            return RefreshIndicator(
-              onRefresh: () async => ticketsBloc.add(RefreshTicketsEvent()),
-              child: ListView.builder(
-                itemCount: ticketsBloc.tickets.length,
+              if (_ticketsBloc.tickets.isEmpty) {
+                return const Center(
+                  child: Text("There are no tickets here."),
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                physics: const AlwaysScrollableScrollPhysics(),
+                controller: _scrollController,
+                itemCount: _ticketsBloc.tickets.length + 1,
                 itemBuilder: (_, index) {
-                  final ticket = state.ticketList[index];
+                  if (index == _ticketsBloc.tickets.length) {
+                    if (_ticketsBloc.tickets.length ==
+                        _ticketsBloc.totalCountTickets) {
+                      return const SizedBox(
+                        height: 40,
+                        child: Center(child: Text("There is nothing more...")),
+                      );
+                    }
+
+                    return const Align(
+                      child: Center(
+                        child: SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
+                  }
+
+                  final ticket = _ticketsBloc.tickets[index];
 
                   return ListTicketItemWidget(
-                    key: Key(ticket.id.toString()),
+                    key: Key(ticket.hashCode.toString()),
                     ticket: ticket,
                     title: "Ticket ${ticket.id}",
                     subtitle: "Ожидает начала загрузки",
-                    onPressedDownload: () =>
-                        ticketsBloc.add(DownloadTicketEvent(ticket: ticket)),
-                    onDismissed: (direction) {
-                      if (direction == DismissDirection.startToEnd ||
-                          direction == DismissDirection.endToStart) {
-                        ticketsBloc.add(DeletedTicketEvent(id: ticket.id));
-                      }
+                    onPressedDownload: () => _ticketsBloc.add(
+                      DownloadSingleTicketEvent(ticket: ticket),
+                    ),
+                    onDismissed: () {
+                      _ticketsBloc.add(
+                        DeletedTicketEvent(id: ticket.id),
+                      );
                     },
                   );
                 },
-              ),
-            );
-          },
+              );
+            },
+          ),
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: _addLink,
@@ -114,7 +188,7 @@ class TicketStoragePage extends StatelessWidget {
       final isValidPdf = utils.checkFileUrl(clipboardData!.text);
 
       if (isValidPdf == null) {
-        ticketUrlTextFieldController.text = clipboardData.text!;
+        _ticketUrlTextFieldController.text = clipboardData.text!;
         // todo: add SnackBar on ModalBottomSheet
         // ScaffoldMessenger.of(_nestedScaffoldMessengerKey.currentContext!)
         //     .showSnackBar(
@@ -131,46 +205,55 @@ class TicketStoragePage extends StatelessWidget {
       isDismissible: true,
       enableDrag: true,
       builder: (context) {
-        return Container(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Form(
-                key: _addFormKey,
-                onChanged: () {
-                  _addFormKey.currentState?.save();
-                  _addFormKey.currentState?.validate();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    top: 40,
-                    right: 20,
-                    left: 20,
-                    bottom: 20,
-                  ),
-                  child: Column(
-                    children: [
-                      DefaultTextField(
-                        controller: ticketUrlTextFieldController,
-                        validator: (value) => utils.checkFileUrl(value),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      ElevatedButton(
-                        onPressed: ticketUrlTextFieldController.text.isEmpty ||
-                                _addFormKey.currentState?.validate() == false
-                            ? null
-                            : () => addTicket(),
-                        child: const Text('Добавить'),
-                      ),
-                    ],
+        return WillPopScope(
+          onWillPop: () async {
+            _ticketUrlTextFieldController.text = "";
+            return true;
+          },
+          child: Container(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Form(
+                  key: _addFormKey,
+                  onChanged: () {
+                    _addFormKey.currentState?.save();
+                    _addFormKey.currentState?.validate();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                      top: 40,
+                      right: 20,
+                      left: 20,
+                      bottom: 20,
+                    ),
+                    child: Column(
+                      children: [
+                        DefaultTextField(
+                          labelText: "PDF file url",
+                          controller: _ticketUrlTextFieldController,
+                          validator: (value) => utils.checkFileUrl(value),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        ElevatedButton(
+                          onPressed: _ticketUrlTextFieldController
+                                      .text.isEmpty ||
+                                  _addFormKey.currentState?.validate() == false
+                              ? null
+                              : () => addTicket(),
+                          child: const Text('Добавить'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -178,8 +261,15 @@ class TicketStoragePage extends StatelessWidget {
   }
 
   void addTicket() {
-    ticketsBloc.add(AddTicketEvent(fileUrl: ticketUrlTextFieldController.text));
+    _ticketsBloc
+        .add(AddTicketEvent(fileUrl: _ticketUrlTextFieldController.text));
 
     _scaffoldMessengerKey.currentContext!.pop();
+  }
+
+  Future<void> _refresh() async {
+    final completer = Completer();
+    _ticketsBloc.add(RefreshTicketsEvent(completer));
+    return completer.future;
   }
 }

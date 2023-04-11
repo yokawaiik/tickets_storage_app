@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
 import 'package:flutter/material.dart';
+import 'package:isar/isar.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -15,6 +17,16 @@ class TicketsRepository {
   TicketsRepository() {
     _ticketStorage = TicketStorageHelper.instance;
     _dio = Dio();
+  }
+
+  Future<int> getTotalCountTickets() async {
+    try {
+      final count = await _ticketStorage.getTotalCountTickets();
+      return count;
+    } catch (e) {
+      debugPrint(e.toString());
+      throw Exception("Something went wrong.");
+    }
   }
 
   Future<List<Ticket>> getTicketList(int limit, int offset) async {
@@ -35,10 +47,22 @@ class TicketsRepository {
       final addedTicket = await _ticketStorage.getTicket(fileUrl);
 
       if (addedTicket == null) {
-        throw Exception("Ticket wasnt't added.");
+        throw Exception("Ticket wasn't added.");
       }
 
       return addedTicket;
+    } on IsarError catch (e) {
+      debugPrint("TicketsRepository - addTicket - IsarError - e: $e");
+      late final String msg;
+      if (e.message
+          .toLowerCase()
+          .contains("Unique index violated.".toLowerCase())) {
+        msg = "Such link has already been saved.";
+      } else {
+        msg = 'Something went wrong';
+      }
+
+      throw TicketsException(msg);
     } catch (e) {
       debugPrint(e.toString());
       throw Exception("Something went wrong.");

@@ -55,6 +55,12 @@ class TicketStorageHelper {
     return ticketList;
   }
 
+  Future<int> getTotalCountTickets() async {
+    final isar = await _database;
+    final count = await isar.collection<TicketCollection>().count();
+    return count;
+  }
+
   Future<void> addTicket(String fileUrl, String id) async {
     final isar = await _database;
 
