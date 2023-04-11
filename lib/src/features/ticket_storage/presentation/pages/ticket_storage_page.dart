@@ -158,10 +158,16 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                     key: Key(ticket.hashCode.toString()),
                     ticket: ticket,
                     title: "Ticket ${ticket.id}",
-                    subtitle: "Ожидает начала загрузки",
-                    onPressedDownload: () => _ticketsBloc.add(
-                      DownloadSingleTicketEvent(ticket: ticket),
-                    ),
+                    subtitleFileDownloaded: "Файл загружен",
+                    subtitleFileDownload: "Ожидает начала загрузки",
+                    // todo: add function with callback with getting progress
+                    // onPressedDownload: () {
+
+                    //   // _ticketsBloc.add(
+                    //   //   DownloadSingleTicketEvent(ticket: ticket),
+                    //   // );
+                    //   // return _ticketsBloc.
+                    // },
                     onDismissed: () {
                       _ticketsBloc.add(
                         DeletedTicketEvent(id: ticket.id),

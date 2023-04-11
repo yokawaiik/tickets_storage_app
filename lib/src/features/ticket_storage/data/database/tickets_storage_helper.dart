@@ -5,8 +5,7 @@ import '../../domain/models/ticket.dart';
 import './database_constants.dart' as database_constants;
 import 'collections/ticket_collection.dart';
 
-const String suggestionsDatabase = "SuggestionsDatabase";
-
+/// A singleton class
 class TicketStorageHelper {
   // Make a singleton class
   TicketStorageHelper._privateConstructor();
@@ -30,7 +29,7 @@ class TicketStorageHelper {
       [
         TicketCollectionSchema,
       ],
-      name: database_constants.suggestionsDatabase,
+      name: database_constants.ticketsDatabase,
     );
     return isar;
   }

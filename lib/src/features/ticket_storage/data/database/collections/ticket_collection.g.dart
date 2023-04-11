@@ -43,7 +43,7 @@ const TicketCollectionSchema = CollectionSchema(
       id: -3268401673993471357,
       name: r'id',
       unique: true,
-      replace: false,
+      replace: true,
       properties: [
         IndexPropertySchema(
           name: r'id',
@@ -56,7 +56,7 @@ const TicketCollectionSchema = CollectionSchema(
       id: -2720505513539609775,
       name: r'fileUrl',
       unique: true,
-      replace: false,
+      replace: true,
       properties: [
         IndexPropertySchema(
           name: r'fileUrl',

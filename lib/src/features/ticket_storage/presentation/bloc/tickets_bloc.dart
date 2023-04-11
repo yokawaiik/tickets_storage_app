@@ -86,9 +86,8 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
     });
     on<DeletedTicketEvent>((event, emit) async {
       try {
-        await _ticketsRepository.removeTicket(event.id);
-
         final ticket = _tickets.firstWhere((ticket) => ticket.id == event.id);
+        await _ticketsRepository.removeTicket(ticket);
 
         _tickets.removeWhere((ticket) => ticket.id == event.id);
         _totalCountTickets--;
@@ -101,9 +100,9 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
       }
     });
     on<DeletedGroupTicketsEvent>((event, emit) async {
+      // todo: delete local saved file
       try {
-        await _ticketsRepository
-            .removeGroupTickets(event.tickets.map((t) => t.id).toList());
+        await _ticketsRepository.removeGroupTickets(event.tickets);
 
         _tickets.removeWhere((ticket) => event.tickets.contains(ticket));
         _totalCountTickets -= event.tickets.length;
@@ -137,23 +136,23 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         event.completer?.complete();
       }
     });
-    on<DownloadSingleTicketEvent>((event, emit) async {
-      try {
-        // todo: download
-        final ticketWithFilePath =
-            await _ticketsRepository.downloadTicketFile(event.ticket);
+    // on<DownloadSingleTicketEvent>((event, emit) async {
+    //   try {
+    //     // todo: download
+    //     final ticketWithFilePath =
+    //         await _ticketsRepository.downloadTicketFile(event.ticket);
 
-        await _ticketsRepository.updateTicket(ticketWithFilePath);
+    //     await _ticketsRepository.updateTicket(ticketWithFilePath);
 
-        _tickets
-            .firstWhere((element) => element.id == ticketWithFilePath.id)
-            .filePath = ticketWithFilePath.filePath;
+    //     _tickets
+    //         .firstWhere((element) => element.id == ticketWithFilePath.id)
+    //         .filePath = ticketWithFilePath.filePath;
 
-        emit(DownloadSingleTicketsState(ticketWithFilePath));
-      } catch (e) {
-        debugPrint("DownloadSingleTicketEvent - e: $e");
-        emit(ErrorTicketsState("Can't download a ticket."));
-      }
-    });
+    //     emit(DownloadSingleTicketsState(ticketWithFilePath));
+    //   } catch (e) {
+    //     debugPrint("DownloadSingleTicketEvent - e: $e");
+    //     emit(ErrorTicketsState("Can't download a ticket."));
+    //   }
+    // });
   }
 }
