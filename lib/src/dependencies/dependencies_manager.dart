@@ -5,7 +5,7 @@ import '../theme/theme.dart';
 
 import '../router/app_router.dart';
 
-Future<void> dependenciesInjector() async {
+Future<void> dependenciesManager() async {
   try {
     GetIt.instance.registerLazySingleton<AppRouter>(() => AppRouter());
 
