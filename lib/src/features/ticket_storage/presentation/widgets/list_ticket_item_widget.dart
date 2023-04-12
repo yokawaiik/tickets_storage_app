@@ -87,11 +87,27 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                widget.title,
-                style: TextStyle(color: colorScheme.primary),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: "${widget.title} ",
+                      style: TextStyle(color: colorScheme.primary),
+                    ),
+                    TextSpan(
+                      text: widget.ticket.id,
+                      style: TextStyle(
+                        color: colorScheme.primary,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              _linearProgressBuilder(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: _linearProgressBuilder(),
+              ),
             ],
           ),
           subtitle: _buildSubtitle(),
@@ -207,9 +223,6 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
         widget.ticket,
       );
 
-      // todo: save file to database
-
-      // widget.ticket.filePath = _downloadTask!.request.path;
       widget.ticket.setFilePath(_downloadTask!.request.path);
 
       await _fileManagerRepository.updateTicket(

@@ -56,18 +56,9 @@ class TicketsRepository {
       }
 
       return addedTicket;
-    } on IsarError catch (e) {
-      debugPrint("TicketsRepository - addTicket - IsarError - e: $e");
-      late final String msg;
-      if (e.message
-          .toLowerCase()
-          .contains("Unique index violated.".toLowerCase())) {
-        msg = "Such link has already been saved.";
-      } else {
-        msg = 'Something went wrong';
-      }
-
-      throw TicketsException(msg);
+    } on TicketsException catch (e) {
+      debugPrint("TicketsRepository - addTicket - TicketsException - e: $e");
+      rethrow;
     } catch (e) {
       debugPrint("TicketsRepository - addTicket - e: ${e.toString()}");
       throw Exception("Something went wrong.");
@@ -97,6 +88,13 @@ class TicketsRepository {
       if (ticket.filePath != null) {
         await File(ticket.filePath!).delete();
       }
+    } on PathNotFoundException catch (e) {
+      // file doesn't exist
+      if (e.osError?.errorCode == 2) {
+        return;
+      }
+      debugPrint(
+          "TicketsRepository - removeTicket - PathNotFoundException - e: ${e.toString()}");
     } catch (e) {
       debugPrint("TicketsRepository - removeTicket - e: ${e.toString()}");
       throw Exception("Something went wrong.");

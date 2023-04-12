@@ -48,6 +48,7 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         );
 
         _tickets.addAll(loadedTickets);
+
         _offset += loadedTickets.length;
 
         emit(LoadedTicketsState(loadedTickets));
@@ -77,24 +78,14 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
       try {
         final addedTicket = await _ticketsRepository.addTicket(event.fileUrl);
 
-        _tickets.add(addedTicket!);
+        _tickets.insert(0, addedTicket!);
+
         _totalCountTickets++;
         _offset++;
 
         emit(AddedSingleTicketsState(addedTicket));
-      } on IsarError catch (e) {
-        debugPrint("AddTicketEvent - IsarError - e: $e");
-        late final String msg;
-        if (e.message
-            .toLowerCase()
-            .contains("Unique index violated.".toLowerCase())) {
-          msg = "Such link has already been saved.";
-        } else {
-          msg = 'Something went wrong';
-        }
-
-        emit(ErrorTicketsState(msg));
       } on TicketsException catch (e) {
+        debugPrint("AddTicketEvent - TicketsException - e: $e");
         emit(ErrorTicketsState(e.message));
       } catch (e) {
         debugPrint("AddTicketEvent - e: $e");
@@ -153,23 +144,5 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         event.completer?.complete();
       }
     });
-    // on<DownloadSingleTicketEvent>((event, emit) async {
-    //   try {
-    //     // todo: download
-    //     final ticketWithFilePath =
-    //         await _ticketsRepository.downloadTicketFile(event.ticket);
-
-    //     await _ticketsRepository.updateTicket(ticketWithFilePath);
-
-    //     _tickets
-    //         .firstWhere((element) => element.id == ticketWithFilePath.id)
-    //         .filePath = ticketWithFilePath.filePath;
-
-    //     emit(DownloadSingleTicketsState(ticketWithFilePath));
-    //   } catch (e) {
-    //     debugPrint("DownloadSingleTicketEvent - e: $e");
-    //     emit(ErrorTicketsState("Can't download a ticket."));
-    //   }
-    // });
   }
 }

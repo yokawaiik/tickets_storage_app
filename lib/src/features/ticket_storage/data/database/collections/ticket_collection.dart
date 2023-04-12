@@ -8,22 +8,23 @@ class TicketCollection {
   @Index(
     name: database_constants.keyIndexName,
     type: IndexType.value,
-    replace: true,
+    replace: false,
     unique: true,
   )
   final Id key = Isar.autoIncrement;
 
   @Index(
     name: database_constants.idIndexName,
-    type: IndexType.value,
-    replace: true,
+    type: IndexType.hash,
+    replace: false,
     unique: true,
   )
   late final String id;
+
   @Index(
     name: database_constants.fileUrlIndexName,
-    type: IndexType.value,
-    replace: true,
+    type: IndexType.hash,
+    replace: false,
     unique: true,
   )
   late String fileUrl;

@@ -48,16 +48,20 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
       },
       builder: (context, state) {
         if (state is ErrorTicketsState) {
-          return Center(
-            child: Text(
-              state.error.toString(),
+          return Scaffold(
+            body: Center(
+              child: Text(
+                state.error.toString(),
+              ),
             ),
           );
         }
 
         if (state is! LoadedSingleTicketState) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
 

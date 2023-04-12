@@ -39,18 +39,21 @@ class TicketStorageHelper {
     final isar = await _database;
 
     final gotTicketCollection = await isar.ticketCollections
-        .where()
+        // .where()
+        // .where(sort: Sort.desc)
+        .where(sort: Sort.desc)
+        .anyKey()
         .offset(offset)
         .limit(limit)
         .findAll();
 
-    final ticketList = gotTicketCollection
-        .map((ticket) => Ticket(
-              id: ticket.id,
-              fileUrl: ticket.fileUrl,
-              filePath: ticket.filePath,
-            ))
-        .toList();
+    final ticketList = gotTicketCollection.map((ticket) {
+      return Ticket(
+        id: ticket.id,
+        fileUrl: ticket.fileUrl,
+        filePath: ticket.filePath,
+      );
+    }).toList();
 
     return ticketList;
   }
@@ -65,7 +68,13 @@ class TicketStorageHelper {
     final isar = await _database;
 
     await isar.writeTxn(() async {
-      await isar.ticketCollections.put(
+      final duplicate = await isar.ticketCollections.getByFileUrl(fileUrl);
+
+      if (duplicate != null) {
+        throw TicketsException("Duplicate ticket isn't allowed.");
+      }
+
+      await isar.ticketCollections.putByFileUrl(
         TicketCollection(
           fileUrl: fileUrl,
           id: id,
@@ -120,7 +129,7 @@ class TicketStorageHelper {
     final isar = await _database;
 
     await isar.writeTxn(() async {
-      await isar.ticketCollections.put(
+      await isar.ticketCollections.putByFileUrl(
         TicketCollection(
           id: ticket.id,
           fileUrl: ticket.fileUrl,

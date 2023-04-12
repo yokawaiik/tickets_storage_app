@@ -43,11 +43,11 @@ const TicketCollectionSchema = CollectionSchema(
       id: -3268401673993471357,
       name: r'id',
       unique: true,
-      replace: true,
+      replace: false,
       properties: [
         IndexPropertySchema(
           name: r'id',
-          type: IndexType.value,
+          type: IndexType.hash,
           caseSensitive: true,
         )
       ],
@@ -56,11 +56,11 @@ const TicketCollectionSchema = CollectionSchema(
       id: -2720505513539609775,
       name: r'fileUrl',
       unique: true,
-      replace: true,
+      replace: false,
       properties: [
         IndexPropertySchema(
           name: r'fileUrl',
-          type: IndexType.value,
+          type: IndexType.hash,
           caseSensitive: true,
         )
       ],
@@ -260,22 +260,6 @@ extension TicketCollectionQueryWhereSort
       return query.addWhereClause(const IdWhereClause.any());
     });
   }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhere> anyId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'id'),
-      );
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhere> anyFileUrl() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        const IndexWhereClause.any(indexName: r'fileUrl'),
-      );
-    });
-  }
 }
 
 extension TicketCollectionQueryWhere
@@ -394,101 +378,6 @@ extension TicketCollectionQueryWhere
   }
 
   QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      idGreaterThan(
-    String id, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'id',
-        lower: [id],
-        includeLower: include,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      idLessThan(
-    String id, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'id',
-        lower: [],
-        upper: [id],
-        includeUpper: include,
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause> idBetween(
-    String lowerId,
-    String upperId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'id',
-        lower: [lowerId],
-        includeLower: includeLower,
-        upper: [upperId],
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      idStartsWith(String IdPrefix) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'id',
-        lower: [IdPrefix],
-        upper: ['$IdPrefix\u{FFFFF}'],
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      idIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'id',
-        value: [''],
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      idIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.lessThan(
-              indexName: r'id',
-              upper: [''],
-            ))
-            .addWhereClause(IndexWhereClause.greaterThan(
-              indexName: r'id',
-              lower: [''],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.greaterThan(
-              indexName: r'id',
-              lower: [''],
-            ))
-            .addWhereClause(IndexWhereClause.lessThan(
-              indexName: r'id',
-              upper: [''],
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
       fileUrlEqualTo(String fileUrl) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(IndexWhereClause.equalTo(
@@ -528,102 +417,6 @@ extension TicketCollectionQueryWhere
               lower: [],
               upper: [fileUrl],
               includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      fileUrlGreaterThan(
-    String fileUrl, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'fileUrl',
-        lower: [fileUrl],
-        includeLower: include,
-        upper: [],
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      fileUrlLessThan(
-    String fileUrl, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'fileUrl',
-        lower: [],
-        upper: [fileUrl],
-        includeUpper: include,
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      fileUrlBetween(
-    String lowerFileUrl,
-    String upperFileUrl, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'fileUrl',
-        lower: [lowerFileUrl],
-        includeLower: includeLower,
-        upper: [upperFileUrl],
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      fileUrlStartsWith(String FileUrlPrefix) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'fileUrl',
-        lower: [FileUrlPrefix],
-        upper: ['$FileUrlPrefix\u{FFFFF}'],
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      fileUrlIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'fileUrl',
-        value: [''],
-      ));
-    });
-  }
-
-  QueryBuilder<TicketCollection, TicketCollection, QAfterWhereClause>
-      fileUrlIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.lessThan(
-              indexName: r'fileUrl',
-              upper: [''],
-            ))
-            .addWhereClause(IndexWhereClause.greaterThan(
-              indexName: r'fileUrl',
-              lower: [''],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.greaterThan(
-              indexName: r'fileUrl',
-              lower: [''],
-            ))
-            .addWhereClause(IndexWhereClause.lessThan(
-              indexName: r'fileUrl',
-              upper: [''],
             ));
       }
     });

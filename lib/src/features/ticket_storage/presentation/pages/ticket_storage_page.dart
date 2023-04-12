@@ -11,6 +11,8 @@ import '../bloc/tickets_bloc.dart';
 import '../widgets/widgets.dart';
 import '../../utils/utils.dart' as utils;
 
+import '../../data/constants/constants.dart' as constants;
+
 class TicketStoragePage extends StatefulWidget {
   const TicketStoragePage({
     Key? key,
@@ -58,6 +60,9 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
     return BlocListener<TicketsBloc, TicketsState>(
       bloc: _ticketsBloc,
       listener: (context, state) {
@@ -115,8 +120,26 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
               }
 
               if (_ticketsBloc.tickets.isEmpty) {
-                return const Center(
-                  child: Text("There are no tickets here."),
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.airplane_ticket,
+                        color: colorScheme.primary,
+                        size: 200,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "There are no tickets here...",
+                        style: textTheme.headlineMedium!.copyWith(
+                          color: colorScheme.primary,
+                        ),
+                      ),
+                    ],
+                  ),
                 );
               }
 
@@ -127,6 +150,11 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                 itemCount: _ticketsBloc.tickets.length + 1,
                 itemBuilder: (_, index) {
                   if (index == _ticketsBloc.tickets.length) {
+                    // hide
+                    if (_ticketsBloc.tickets.length < constants.listPageLimit) {
+                      return const SizedBox();
+                    }
+
                     if (_ticketsBloc.tickets.length ==
                         _ticketsBloc.totalCountTickets) {
                       return const SizedBox(
@@ -135,9 +163,9 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                       );
                     }
 
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: const Align(
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Align(
                         child: Center(
                           child: SizedBox(
                             height: 24,
@@ -154,20 +182,12 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                   return ListTicketItemWidget(
                     key: Key(ticket.hashCode.toString()),
                     ticket: ticket,
-                    title: "Ticket ${ticket.id}",
+                    title: "Ticket",
                     subtitleFileDownloaded: "Файл загружен",
                     subtitleFileDownloading: "Загрузка",
                     subtitleFileDownload: "Ожидает начала загрузки",
                     subtitleFileError: "Ошибка при загрузке",
                     scaffoldMessengerKey: _scaffoldMessengerKey,
-                    // todo: add function with callback with getting progress
-                    // onPressedDownload: () {
-
-                    //   // _ticketsBloc.add(
-                    //   //   DownloadSingleTicketEvent(ticket: ticket),
-                    //   // );
-                    //   // return _ticketsBloc.
-                    // },
                     onDismissed: () {
                       _ticketsBloc.add(
                         DeletedTicketEvent(id: ticket.id),
@@ -191,10 +211,12 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     final clipboardData = await Clipboard.getData('text/plain');
 
     if (clipboardData?.text != null) {
-      final isValidPdf = utils.checkFileUrl(clipboardData!.text);
+      final clipboardText = clipboardData!.text?.replaceAll(' ', '');
+
+      final isValidPdf = utils.checkFileUrl(clipboardText);
 
       if (isValidPdf == null) {
-        _ticketUrlTextFieldController.text = clipboardData.text!;
+        _ticketUrlTextFieldController.text = clipboardText!;
         // todo: add SnackBar on ModalBottomSheet
         // ScaffoldMessenger.of(_nestedScaffoldMessengerKey.currentContext!)
         //     .showSnackBar(
