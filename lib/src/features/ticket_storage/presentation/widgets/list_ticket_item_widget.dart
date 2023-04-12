@@ -2,27 +2,41 @@ import 'package:documents_saver_app/src/features/ticket_storage/domain/repositor
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../theme/theme.dart';
 import '../../domain/models/ticket.dart';
+
+import '../../../../router/router.dart' as router;
+
+enum _FileStatus {
+  pending,
+  downloading,
+  downloaded,
+  error,
+}
 
 class ListTicketItemWidget extends StatefulWidget {
   final Ticket ticket;
   final String title;
   final String subtitleFileDownload;
+  final String subtitleFileDownloading;
   final String subtitleFileDownloaded;
+  final String subtitleFileError;
 
-  // final DownloadTask Function()? onPressedDownload;
   final void Function() onDismissed;
+  final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
 
   const ListTicketItemWidget({
     required super.key,
     required this.title,
     required this.ticket,
     required this.subtitleFileDownload,
+    required this.subtitleFileDownloading,
     required this.subtitleFileDownloaded,
-    // required this.onPressedDownload,
+    required this.subtitleFileError,
     required this.onDismissed,
+    required this.scaffoldMessengerKey,
   });
 
   @override
@@ -30,36 +44,19 @@ class ListTicketItemWidget extends StatefulWidget {
 }
 
 class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
-  // late final ValueNotifier<double> _downloadProgress;
-
-  // bool get _isFileDownloaded => _downloadProgress.value == 1.0 ? true : false;
-
-  // @override
-  // void initState() {
-  //   _downloadProgress = ValueNotifier(widget.ticket.filePath == null ? 0 : 1.0);
-
-  //   super.initState();
-  // }
-
-  late bool _hasError;
-
+  late _FileStatus _fileStatus;
   late final FileManagerRepository _fileManagerRepository;
   DownloadTask? _downloadTask;
-
-  bool get _isFileDownloaded {
-    if (widget.ticket.filePath != null) {
-      return true;
-    }
-
-    if (_downloadTask == null) return false;
-
-    return _downloadTask!.status.value.isCompleted;
-  }
 
   @override
   void initState() {
     _fileManagerRepository = FileManagerRepository();
-    _hasError = false;
+    if (widget.ticket.filePath != null) {
+      _fileStatus = _FileStatus.downloaded;
+    } else {
+      _fileStatus = _FileStatus.pending;
+    }
+
     super.initState();
   }
 
@@ -67,95 +64,102 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Slidable(
-      key: ValueKey(widget.key!.toString()),
-      endActionPane: ActionPane(
-        motion: const ScrollMotion(),
-        children: [
-          SlidableAction(
-            spacing: 4,
-            onPressed: (_) => widget.onDismissed(),
-            backgroundColor: ColorConstants.deleteColor,
-            foregroundColor: Colors.white,
-            icon: Icons.delete,
-            label: 'Delete',
-          ),
-        ],
-      ),
-      child: ListTile(
-        leading: const Icon(Icons.airplane_ticket),
-        title: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+    return InkWell(
+      onTap: _openFile,
+      child: Slidable(
+        key: ValueKey(widget.key!.toString()),
+        endActionPane: ActionPane(
+          motion: const ScrollMotion(),
           children: [
-            Text(
-              widget.title,
-              style: TextStyle(color: colorScheme.primary),
+            SlidableAction(
+              spacing: 4,
+              onPressed: (_) => widget.onDismissed(),
+              backgroundColor: ColorConstants.deleteColor,
+              foregroundColor: Colors.white,
+              icon: Icons.delete,
+              label: 'Delete',
             ),
-            // ValueListenableBuilder(
-            //   valueListenable: _downloadProgress,
-            //   builder: (_, value, widget) {
-            //     return LinearProgressIndicator(
-            //       value: value,
-            //     );
-            //   },
-            // )
-            _downloadTask == null
-                ? LinearProgressIndicator(
-                    value: _isFileDownloaded ? 1.0 : 0.0,
-                  )
-                : ValueListenableBuilder(
-                    valueListenable: _downloadTask!.progress,
-                    builder: (_, value, widget) {
-                      return LinearProgressIndicator(
-                        value: value,
-                      );
-                    },
-                  )
           ],
         ),
-        subtitle: Text(
-          _isFileDownloaded
-              ? widget.subtitleFileDownloaded
-              : widget.subtitleFileDownload,
+        child: ListTile(
+          leading: const Icon(Icons.airplane_ticket),
+          title: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.title,
+                style: TextStyle(color: colorScheme.primary),
+              ),
+              _linearProgressBuilder(),
+            ],
+          ),
+          subtitle: _buildSubtitle(),
+          trailing: _buildDownloadButton(context),
         ),
-        // trailing: widget.onPressedDownload != null
-        //     ? IconButton(
-        //         // onPressed: widget.onPressedDownload,
-        //         onPressed: _downloadFile,
-        //         color: colorScheme.primary,
-        //         icon: Icon(
-        //           widget.ticket.filePath != null
-        //               ? Icons.cloud_done_outlined
-        //               : Icons.cloud_download,
-        //         ),
-        //       )
-        //     : null,
-        trailing: _buildDownloadButton(context),
       ),
     );
   }
 
-  Widget? _buildDownloadButton(BuildContext context) {
-    // if (widget.onPressedDownload != null) return null;
+  Text _buildSubtitle() {
+    final colorScheme = Theme.of(context).colorScheme;
 
+    late final String text;
+    late final Color color;
+
+    switch (_fileStatus) {
+      case _FileStatus.pending:
+        text = widget.subtitleFileDownload;
+        color = colorScheme.primary;
+        break;
+      case _FileStatus.downloading:
+        text = widget.subtitleFileDownloading;
+        color = colorScheme.primary;
+        break;
+      case _FileStatus.downloaded:
+        text = widget.subtitleFileDownloaded;
+        color = colorScheme.secondary;
+        break;
+      case _FileStatus.error:
+        text = widget.subtitleFileError;
+        color = colorScheme.error;
+        break;
+    }
+
+    return Text(
+      text,
+      style: TextStyle(color: color),
+    );
+  }
+
+  Widget? _buildDownloadButton(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
 
     late final Color color;
     late final IconData icon;
     late final void Function()? onPressed;
-    if (_isFileDownloaded) {
-      color = colorScheme.secondary;
-      icon = Icons.cloud_download;
-      onPressed = null;
-    } else if (_hasError) {
-      color = colorScheme.error;
-      icon = Icons.cloud_off;
-      onPressed = null;
-    } else {
-      color = colorScheme.primary;
-      icon = Icons.cloud_done_outlined;
-      onPressed = _downloadFile;
+
+    switch (_fileStatus) {
+      case _FileStatus.pending:
+        color = colorScheme.primary;
+        icon = Icons.cloud_download;
+        onPressed = _downloadFile;
+        break;
+      case _FileStatus.downloading:
+        color = colorScheme.tertiary;
+        icon = Icons.cloud_sync_sharp;
+        onPressed = null;
+        break;
+      case _FileStatus.downloaded:
+        color = colorScheme.secondary;
+        icon = Icons.cloud_done_outlined;
+        onPressed = null;
+        break;
+      case _FileStatus.error:
+        color = colorScheme.error;
+        icon = Icons.repeat;
+        onPressed = _downloadFile;
+        break;
     }
 
     return IconButton(
@@ -167,27 +171,72 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
     );
   }
 
+  Widget _linearProgressBuilder() {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    switch (_fileStatus) {
+      case _FileStatus.pending:
+        return const LinearProgressIndicator(
+          value: 0.0,
+        );
+      case _FileStatus.downloading:
+        return ValueListenableBuilder(
+          valueListenable: _downloadTask!.progress,
+          builder: (_, value, widget) {
+            return LinearProgressIndicator(
+              value: value,
+            );
+          },
+        );
+      case _FileStatus.downloaded:
+        return LinearProgressIndicator(
+          value: 1.0,
+          color: colorScheme.secondary,
+        );
+      case _FileStatus.error:
+        return LinearProgressIndicator(
+          value: 0.0,
+          backgroundColor: colorScheme.error,
+        );
+    }
+  }
+
   void _downloadFile() async {
-    // if it shows then user can press
-    // widget.onPressedDownload!();
+    try {
+      _downloadTask = await _fileManagerRepository.downloadTicketFile(
+        widget.ticket,
+      );
 
-    // _downloadProgress.value = 0.50;
-    setState(() {});
-    _downloadTask = await _fileManagerRepository.downloadTicketFile(
-      widget.ticket,
-      _completeCallback,
-      _errorCallback,
+      // todo: save file to database
+
+      // widget.ticket.filePath = _downloadTask!.request.path;
+      widget.ticket.setFilePath(_downloadTask!.request.path);
+
+      await _fileManagerRepository.updateTicket(
+        widget.ticket,
+      );
+
+      _fileStatus = _FileStatus.downloaded;
+    } catch (e) {
+      _fileStatus = _FileStatus.error;
+    } finally {
+      setState(() {});
+    }
+  }
+
+  void _openFile() {
+    if (widget.ticket.filePath == null) {
+      ScaffoldMessenger.of(widget.scaffoldMessengerKey.currentContext!)
+          .showSnackBar(
+        const SnackBar(content: Text("First, you need to save file.")),
+      );
+      return;
+    }
+
+    context.pushNamed(
+      router.ticketDetailPage,
+      queryParams: router.TicketDetailPageQueryParams(id: widget.ticket.id)
+          .toParamsMap(),
     );
-
-    setState(() {});
-  }
-
-  _completeCallback() {
-    setState(() {});
-  }
-
-  _errorCallback() {
-    _hasError = true;
-    setState(() {});
   }
 }

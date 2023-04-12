@@ -1,3 +1,4 @@
+import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
@@ -100,7 +101,7 @@ class TicketStorageHelper {
         await isar.ticketCollections.deleteById(id);
       });
     } catch (e) {
-      debugPrint("removeTicket: ${e}");
+      debugPrint("removeTicket: $e");
       rethrow;
     }
   }
@@ -127,5 +128,23 @@ class TicketStorageHelper {
         ),
       );
     });
+  }
+
+  Future<Ticket?> getTicketById(String id) async {
+    final isar = await _database;
+
+    final gotTicketRaw = await isar.ticketCollections.getById(id);
+
+    if (gotTicketRaw == null) {
+      throw TicketsException("Such a ticket wasn't found.");
+    }
+
+    final ticket = Ticket(
+      id: gotTicketRaw.id,
+      fileUrl: gotTicketRaw.fileUrl,
+      filePath: gotTicketRaw.filePath,
+    );
+
+    return ticket;
   }
 }

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 import 'package:meta/meta.dart';
 
+import '../../domain/enums/error_situation.dart';
 import '../../domain/models/ticket.dart';
 import '../../domain/repository/tickets_repository.dart';
 
@@ -52,6 +53,22 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(LoadedTicketsState(loadedTickets));
       } catch (e) {
         debugPrint("GetInitialTicketsEvent - e: $e");
+        emit(ErrorTicketsState("Tickets hasn't got from local storage."));
+      }
+    });
+
+    /// GetSingleTicketsEvent - when user tap on a item list
+    on<GetSingleTicketsEvent>((event, emit) async {
+      try {
+        debugPrint("GetSingleTicketsEvent - event: ${event.id}");
+
+        final loadedTickets = await _ticketsRepository.getSingleTicket(
+          event.id,
+        );
+
+        emit(LoadedSingleTicketState(loadedTickets));
+      } catch (e) {
+        debugPrint("GetSingleTicketsEvent - e: $e");
         emit(ErrorTicketsState("Tickets hasn't got from local storage."));
       }
     });

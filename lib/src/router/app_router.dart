@@ -1,3 +1,4 @@
+import 'package:documents_saver_app/src/router/router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../features/ticket_storage/presentation/bloc/tickets_bloc.dart';
@@ -28,6 +29,21 @@ class AppRouter {
           // },
           builder: (context, goRouterState) {
             return TicketStoragePage();
+          },
+        ),
+        GoRoute(
+          name: routes_constants.ticketDetailPage,
+          path: routes_constants.ticketDetailPagePath,
+          builder: (context, state) {
+            // final ticketId = state
+            //     .queryParams[routes_constants.ticketDetailPageQueryParamIdPath];
+            // final ticketId = state
+            //     .queryParams[routes_constants.ticketDetailPageQueryParamIdPath];
+
+            final queryParams =
+                TicketDetailPageQueryParams.fromParamsMap(state.queryParams);
+
+            return TicketDetailPage(queryParams: queryParams);
           },
         ),
         // GoRoute(

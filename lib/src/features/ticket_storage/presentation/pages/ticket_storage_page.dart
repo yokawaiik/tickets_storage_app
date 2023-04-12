@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:documents_saver_app/src/features/ticket_storage/domain/enums/error_situation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,16 +21,6 @@ class TicketStoragePage extends StatefulWidget {
 }
 
 class _TicketStoragePageState extends State<TicketStoragePage> {
-  // final TicketsBloc ticketsBloc = GetIt.I.get<TicketsBloc>();
-
-  // final _ticketUrlTextFieldController = TextEditingController();
-
-  // final _addFormKey = GlobalKey<FormState>();
-
-  // final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
-  //     GlobalKey<ScaffoldMessengerState>();
-
-  // ScrollController _scrollController = new ScrollController();
   late final TicketsBloc _ticketsBloc;
   late final TextEditingController _ticketUrlTextFieldController;
   late final GlobalKey<FormState> _addFormKey;
@@ -39,12 +30,14 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   @override
   void initState() {
     _ticketsBloc = GetIt.I.get<TicketsBloc>();
+    _ticketsBloc..add(GetTicketsEvent(inital: true));
     _ticketUrlTextFieldController = TextEditingController();
     _addFormKey = GlobalKey<FormState>();
     _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
     _scrollController = ScrollController();
 
     _scrollController.addListener(() async {
+      debugPrint("_TicketStoragePageState - _scrollController.addListener");
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         if (_ticketsBloc.tickets.length != _ticketsBloc.totalCountTickets) {
@@ -87,7 +80,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         );
       },
       listenWhen: (previous, current) {
-        if (current is ErrorTicketsState ||
+        if ((current is ErrorTicketsState &&
+                current.errorSituation == ErrorSituation.tickets) ||
             current is RemovedSingleTicketsState) {
           return true;
         }
@@ -102,7 +96,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         body: RefreshIndicator(
           onRefresh: _refresh,
           child: BlocBuilder<TicketsBloc, TicketsState>(
-            bloc: _ticketsBloc..add(GetTicketsEvent(inital: true)),
+            bloc: _ticketsBloc,
             buildWhen: (previous, current) {
               if (previous == current) return false;
               if (current is AddedSingleTicketsState ||
@@ -141,12 +135,15 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                       );
                     }
 
-                    return const Align(
-                      child: Center(
-                        child: SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: CircularProgressIndicator(),
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: const Align(
+                        child: Center(
+                          child: SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(),
+                          ),
                         ),
                       ),
                     );
@@ -159,7 +156,10 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                     ticket: ticket,
                     title: "Ticket ${ticket.id}",
                     subtitleFileDownloaded: "Файл загружен",
+                    subtitleFileDownloading: "Загрузка",
                     subtitleFileDownload: "Ожидает начала загрузки",
+                    subtitleFileError: "Ошибка при загрузке",
+                    scaffoldMessengerKey: _scaffoldMessengerKey,
                     // todo: add function with callback with getting progress
                     // onPressedDownload: () {
 

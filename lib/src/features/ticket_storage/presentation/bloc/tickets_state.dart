@@ -17,6 +17,16 @@ class LoadedTicketsState extends TicketsState {
   List<Object?> get props => [loadedTickets];
 }
 
+/// LoadedSingleTicketState - for DetailTicketPage
+class LoadedSingleTicketState extends TicketsState {
+  final Ticket ticket;
+
+  LoadedSingleTicketState(this.ticket);
+
+  @override
+  List<Object?> get props => [ticket];
+}
+
 class AddedSingleTicketsState extends TicketsState {
   final Ticket ticket;
 
@@ -46,8 +56,12 @@ class RemovedGroupTicketsState extends TicketsState {
 
 class ErrorTicketsState extends TicketsState {
   final Object? error;
+  final ErrorSituation errorSituation;
 
-  ErrorTicketsState([this.error = "Something went wrong."]);
+  ErrorTicketsState([
+    this.error = "Something went wrong.",
+    this.errorSituation = ErrorSituation.tickets,
+  ]);
 
   @override
   List<Object?> get props => [error];

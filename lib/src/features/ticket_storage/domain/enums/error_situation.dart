@@ -1,0 +1,1 @@
+enum ErrorSituation { tickets, ticket }

@@ -16,20 +16,15 @@ class GetTicketsEvent implements TicketsEvent {
   GetTicketsEvent({this.inital = false});
 }
 
+class GetSingleTicketsEvent implements TicketsEvent {
+  final String id;
+  GetSingleTicketsEvent(this.id);
+}
+
 class RefreshTicketsEvent implements TicketsEvent {
   final Completer? completer;
   RefreshTicketsEvent(this.completer);
 }
-
-// class DownloadSingleTicketEvent implements TicketsEvent {
-//   final Ticket ticket;
-//   final void Function(int, int)? onReceiveProgressCallback;
-
-//   DownloadSingleTicketEvent({
-//     required this.ticket,
-//     required this.onReceiveProgressCallback,
-//   });
-// }
 
 class DeletedTicketEvent implements TicketsEvent {
   final String id;

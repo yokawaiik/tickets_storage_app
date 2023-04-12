@@ -16,13 +16,11 @@ import 'package:path/path.dart' as path;
 
 class TicketsRepository {
   late final TicketStorageHelper _ticketStorage;
-  // late final Dio _dio;
   late final DownloadManager _dm;
 
   TicketsRepository() {
     _ticketStorage = TicketStorageHelper.instance;
     _dm = DownloadManager();
-    // _dio = Dio();
   }
 
   Future<int> getTotalCountTickets() async {
@@ -30,7 +28,8 @@ class TicketsRepository {
       final count = await _ticketStorage.getTotalCountTickets();
       return count;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint(
+          "TicketsRepository - getTotalCountTickets - e: ${e.toString()}");
       throw Exception("Something went wrong.");
     }
   }
@@ -41,7 +40,7 @@ class TicketsRepository {
 
       return tickets;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("TicketsRepository - getTicketList - e: ${e.toString()}");
       throw Exception("Something went wrong.");
     }
   }
@@ -70,7 +69,7 @@ class TicketsRepository {
 
       throw TicketsException(msg);
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("TicketsRepository - addTicket - e: ${e.toString()}");
       throw Exception("Something went wrong.");
     }
   }
@@ -87,7 +86,7 @@ class TicketsRepository {
 
       return addedTicket;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("TicketsRepository - updateTicket - e: ${e.toString()}");
       throw Exception("Something went wrong.");
     }
   }
@@ -99,7 +98,7 @@ class TicketsRepository {
         await File(ticket.filePath!).delete();
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("TicketsRepository - removeTicket - e: ${e.toString()}");
       throw Exception("Something went wrong.");
     }
   }
@@ -114,63 +113,26 @@ class TicketsRepository {
         }
       }
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("TicketsRepository - removeGroupTickets - e: ${e.toString()}");
       throw Exception("Something went wrong.");
     }
   }
 
-  // Future<List<Ticket>> removeTickets(List<Ticket> tickets) async {}
-
-  Future<Ticket> downloadTicketFile(
-    Ticket ticket,
-    DownloadTask Function(DownloadTask)? onReceiveProgressCallback,
-  ) async {
+  Future<Ticket> getSingleTicket(String id) async {
     try {
-      final Directory appDocumentsDir =
-          await getApplicationDocumentsDirectory();
-      final fileName = path.basename(ticket.fileUrl);
+      final ticket = await _ticketStorage.getTicketById(id);
 
-      final saveFilePath = '${appDocumentsDir.path}/$fileName';
-
-      // todo: check it
-      // _dio
-      //     .download(
-      //       ticket.fileUrl,
-      //       saveFilePath,
-      //       onReceiveProgress: onReceiveProgressCallback,
-      //     )
-      //     .asStream();
-      final task = await _dm.addDownload(ticket.fileUrl, saveFilePath);
-
-      // final task = _dm.getDownload(ticket.fileUrl);
-
-      if (task == null) {
-        throw TicketsException(
-            "Can't download the file from ${ticket.fileUrl}");
+      if (ticket == null) {
+        throw TicketsException("Ticket wasnt't updated.");
       }
-
-      if (onReceiveProgressCallback != null) {
-        await task.whenDownloadComplete(timeout: const Duration(minutes: 5));
-        task.progress.addListener(
-          () async {
-            ticket.setFilePath(saveFilePath);
-            await updateTicket(ticket);
-          },
-        );
-
-        onReceiveProgressCallback(task);
-      } else {
-        ticket.setFilePath(saveFilePath);
-        await updateTicket(ticket);
-      }
-
-      // ticket.setFilePath(saveFilePath);
 
       return ticket;
-    } on TicketsException catch (_) {
+    } on TicketsException catch (e) {
+      debugPrint(
+          "TicketsRepository - removeGroupTickets - TicketsException - e: ${e.toString()}");
       rethrow;
     } catch (e) {
-      debugPrint(e.toString());
+      debugPrint("TicketsRepository - removeGroupTickets - e: ${e.toString()}");
       throw Exception("Something went wrong.");
     }
   }
