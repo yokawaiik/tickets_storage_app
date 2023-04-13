@@ -1,4 +1,4 @@
-# Documents Saver App
+# Ticket storage
 
 ## Description
 
@@ -6,7 +6,7 @@ A small application project where the user can differentiate between different t
 
 ## Content table
 
-- [Documents Saver App](#documents-saver-app)
+- [Ticket storage](#ticket-storage)
   - [Description](#description)
   - [Content table](#content-table)
   - [Platforms](#platforms)
