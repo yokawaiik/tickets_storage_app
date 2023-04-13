@@ -25,7 +25,10 @@ class ListTicketItemWidget extends StatefulWidget {
   final String subtitleFileError;
 
   final void Function() onDismissed;
+  final void Function(bool) onSelectCallback;
   final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey;
+
+  final bool isSelectionMode;
 
   const ListTicketItemWidget({
     required super.key,
@@ -37,6 +40,8 @@ class ListTicketItemWidget extends StatefulWidget {
     required this.subtitleFileError,
     required this.onDismissed,
     required this.scaffoldMessengerKey,
+    this.isSelectionMode = false,
+    required this.onSelectCallback,
   });
 
   @override
@@ -57,6 +62,11 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
       _fileStatus = _FileStatus.pending;
     }
 
+    if (!widget.isSelectionMode) {
+      // todo: check it
+      widget.ticket.setSelection(false);
+    }
+
     super.initState();
   }
 
@@ -67,6 +77,7 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
     return InkWell(
       onTap: _openFile,
       child: Slidable(
+        enabled: widget.isSelectionMode == false,
         key: ValueKey(widget.key!.toString()),
         endActionPane: ActionPane(
           motion: const ScrollMotion(),
@@ -82,7 +93,7 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
           ],
         ),
         child: ListTile(
-          leading: const Icon(Icons.airplane_ticket),
+          leading: const Icon(Icons.local_activity),
           title: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +122,12 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
             ],
           ),
           subtitle: _buildSubtitle(),
-          trailing: _buildDownloadButton(context),
+          trailing: widget.isSelectionMode == true
+              ? Checkbox(
+                  value: widget.ticket.isSelected,
+                  onChanged: _select,
+                )
+              : _buildDownloadButton(context),
         ),
       ),
     );
@@ -251,5 +267,14 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
       queryParams: router.TicketDetailPageQueryParams(id: widget.ticket.id)
           .toParamsMap(),
     );
+  }
+
+  void _select(bool? value) {
+    if (value == null) return;
+
+    widget.ticket.setSelection(value);
+
+    widget.onSelectCallback(widget.ticket.isSelected);
+    setState(() {});
   }
 }

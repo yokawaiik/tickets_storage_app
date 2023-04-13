@@ -75,3 +75,30 @@ class DownloadSingleTicketsState extends TicketsState {
   @override
   List<Object?> get props => [ticket];
 }
+
+class SetSelectionSingleTicketsState extends TicketsState {
+  final Ticket ticket;
+
+  SetSelectionSingleTicketsState(this.ticket);
+
+  @override
+  List<Object?> get props => [ticket];
+}
+
+class ResetSelectionTicketsState extends TicketsState {
+  final List<Ticket> resetSelectionTickets;
+
+  ResetSelectionTicketsState(this.resetSelectionTickets);
+
+  @override
+  List<Object?> get props => [resetSelectionTickets];
+}
+
+class RemovedSelectedTicketsState extends TicketsState {
+  final List<Ticket> deleteSelectedTickets;
+
+  RemovedSelectedTicketsState(this.deleteSelectedTickets);
+
+  @override
+  List<Object?> get props => [deleteSelectedTickets];
+}

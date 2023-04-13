@@ -46,7 +46,7 @@ A small application project where the user can differentiate between different t
 - [x] Bloc controlls global state where it contains handled data was got from local database;
 - [x] User can see a ticket's PDF file if it has been downloaded;
 - [x] Delete list item by swipe;
-- [ ] Delete selected group items;
+- [x] Delete selected group items;
 
 ## Demonstration
 

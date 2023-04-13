@@ -105,6 +105,7 @@ class TicketsRepository {
     try {
       await _ticketStorage
           .removeGroupTickets(tickets.map((t) => t.id).toList());
+
       for (final ticket in tickets) {
         if (ticket.filePath != null) {
           await File(ticket.filePath!).delete();

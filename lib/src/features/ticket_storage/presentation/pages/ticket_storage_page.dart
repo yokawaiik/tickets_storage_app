@@ -29,17 +29,22 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   late final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey;
   late final ScrollController _scrollController;
 
+  late bool _isSelectionMode;
+
   @override
   void initState() {
     _ticketsBloc = GetIt.I.get<TicketsBloc>();
-    _ticketsBloc..add(GetTicketsEvent(inital: true));
+    _ticketsBloc.add(GetTicketsEvent(inital: true));
     _ticketUrlTextFieldController = TextEditingController();
     _addFormKey = GlobalKey<FormState>();
     _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
     _scrollController = ScrollController();
 
+    _isSelectionMode = false;
+
     _scrollController.addListener(() async {
-      debugPrint("_TicketStoragePageState - _scrollController.addListener");
+      debugPrint(
+          "_TicketStoragePageState - initState - _scrollController.addListener");
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         if (_ticketsBloc.tickets.length != _ticketsBloc.totalCountTickets) {
@@ -72,6 +77,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
           message = state.error.toString();
         } else if (state is RemovedSingleTicketsState) {
           message = "Was deleted: ${state.removedTicket.fileUrl}";
+        } else if (state is RemovedSelectedTicketsState) {
+          message = "Selected tickets were deleted.";
         } else {
           message = "Something went wrong.";
         }
@@ -87,7 +94,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
       listenWhen: (previous, current) {
         if ((current is ErrorTicketsState &&
                 current.errorSituation == ErrorSituation.tickets) ||
-            current is RemovedSingleTicketsState) {
+            current is RemovedSingleTicketsState ||
+            current is RemovedSelectedTicketsState) {
           return true;
         }
         return false;
@@ -96,7 +104,16 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         key: _scaffoldMessengerKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Хранение билетов"),
+          title: const Text("Tickets storage"),
+          actions: [
+            IconButton(
+              onPressed: _toggleSelection,
+              tooltip: "Select group",
+              isSelected: _isSelectionMode,
+              selectedIcon: const Icon(Icons.library_add_check),
+              icon: const Icon(Icons.library_add_check_outlined),
+            )
+          ],
         ),
         body: RefreshIndicator(
           onRefresh: _refresh,
@@ -106,6 +123,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
               if (previous == current) return false;
               if (current is AddedSingleTicketsState ||
                   current is RemovedSingleTicketsState ||
+                  current is RemovedSelectedTicketsState ||
                   current is RemovedGroupTicketsState ||
                   current is LoadedTicketsState) {
                 return true;
@@ -125,7 +143,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
-                        Icons.airplane_ticket,
+                        Icons.local_activity,
                         color: colorScheme.primary,
                         size: 200,
                       ),
@@ -193,16 +211,30 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                         DeletedTicketEvent(id: ticket.id),
                       );
                     },
+                    isSelectionMode: _isSelectionMode,
+                    onSelectCallback: (selection) {
+                      _ticketsBloc.add(
+                        SetSelectionSingleTicketsEvent(
+                          ticket: ticket,
+                          selection: selection,
+                        ),
+                      );
+                    },
                   );
                 },
               );
             },
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: _addLink,
-          label: const Text("Добавить"),
-        ),
+        floatingActionButton: _isSelectionMode
+            ? FloatingActionButton.extended(
+                onPressed: _deleteSelected,
+                label: const Text("Delete selected"),
+              )
+            : FloatingActionButton.extended(
+                onPressed: _addLink,
+                label: const Text("Add"),
+              ),
       ),
     );
   }
@@ -299,5 +331,19 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     final completer = Completer();
     _ticketsBloc.add(RefreshTicketsEvent(completer));
     return completer.future;
+  }
+
+  void _toggleSelection() {
+    _isSelectionMode = !_isSelectionMode;
+
+    if (!_isSelectionMode) {
+      _ticketsBloc.add(ResetSelectionTicketsEvent());
+    }
+
+    setState(() {});
+  }
+
+  void _deleteSelected() {
+    _ticketsBloc.add(RemoveSelectedTicketsEvent());
   }
 }

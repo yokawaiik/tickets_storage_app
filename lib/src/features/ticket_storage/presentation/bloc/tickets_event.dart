@@ -32,8 +32,16 @@ class DeletedTicketEvent implements TicketsEvent {
   DeletedTicketEvent({required this.id});
 }
 
-class DeletedGroupTicketsEvent implements TicketsEvent {
-  final List<Ticket> tickets;
+class SetSelectionSingleTicketsEvent implements TicketsEvent {
+  final Ticket ticket;
+  final bool selection;
 
-  DeletedGroupTicketsEvent({required this.tickets});
+  SetSelectionSingleTicketsEvent({
+    required this.ticket,
+    required this.selection,
+  });
 }
+
+class ResetSelectionTicketsEvent implements TicketsEvent {}
+
+class RemoveSelectedTicketsEvent implements TicketsEvent {}

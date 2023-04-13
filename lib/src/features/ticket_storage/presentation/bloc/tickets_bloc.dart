@@ -107,21 +107,6 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(ErrorTicketsState("Ticket wasn't deleted."));
       }
     });
-    on<DeletedGroupTicketsEvent>((event, emit) async {
-      // todo: delete local saved file
-      try {
-        await _ticketsRepository.removeGroupTickets(event.tickets);
-
-        _tickets.removeWhere((ticket) => event.tickets.contains(ticket));
-        _totalCountTickets -= event.tickets.length;
-        _offset -= event.tickets.length;
-
-        emit(RemovedGroupTicketsState(event.tickets));
-      } catch (e) {
-        debugPrint("DeletedGroupTicketsEvent - e: $e");
-        emit(ErrorTicketsState("Group of tickets wasn't deleted."));
-      }
-    });
     on<RefreshTicketsEvent>((event, emit) async {
       try {
         _tickets.clear();
@@ -142,6 +127,62 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(ErrorTicketsState("Can't loaded tickets."));
       } finally {
         event.completer?.complete();
+      }
+    });
+    on<SetSelectionSingleTicketsEvent>((event, emit) {
+      try {
+        final foundTicket =
+            _tickets.firstWhere((ticket) => ticket == event.ticket);
+
+        foundTicket.setSelection(event.selection);
+
+        emit(SetSelectionSingleTicketsState(foundTicket));
+      } catch (e) {
+        debugPrint("SelectTicketEvent - e: $e");
+        emit(ErrorTicketsState("Can't select a ticket."));
+      }
+    });
+    on<ResetSelectionTicketsEvent>((event, emit) {
+      debugPrint("ResetSelectionTicketsEvent");
+
+      try {
+        final List<Ticket> resetSelectionTickets = [];
+        for (var ticket in _tickets) {
+          if (ticket.isSelected) {
+            ticket.setSelection(false);
+            resetSelectionTickets.add(ticket);
+          }
+        }
+
+        emit(ResetSelectionTicketsState(resetSelectionTickets));
+      } catch (e) {
+        debugPrint("ResetSelectionTicketsEvent - e: $e");
+        emit(ErrorTicketsState("Can't reset selection."));
+      }
+    });
+    on<RemoveSelectedTicketsEvent>((event, emit) async {
+      debugPrint("DeleteSelectedTicketsEvent");
+
+      try {
+        final List<Ticket> deleteSelectedTickets = [];
+        for (var ticket in _tickets) {
+          if (ticket.isSelected) {
+            ticket.setSelection(false);
+            deleteSelectedTickets.add(ticket);
+          }
+        }
+
+        await _ticketsRepository.removeGroupTickets(deleteSelectedTickets);
+
+        _tickets
+            .removeWhere((ticket) => deleteSelectedTickets.contains(ticket));
+
+        debugPrint("deleteSelectedTickets: ${deleteSelectedTickets}");
+
+        emit(RemovedSelectedTicketsState(deleteSelectedTickets));
+      } catch (e) {
+        debugPrint("DeleteSelectedTicketsEvent - e: $e");
+        emit(ErrorTicketsState("Can't reset selection."));
       }
     });
   }

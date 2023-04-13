@@ -5,18 +5,26 @@ class Ticket extends Equatable {
   late final String fileUrl;
   String? filePath;
 
+  bool isSelected;
+
   Ticket({
     required this.id,
     required this.fileUrl,
     required this.filePath,
+    this.isSelected = false,
   });
 
-  Ticket.preview({
-    required this.fileUrl,
-  });
+  void setSelection(bool selection) {
+    isSelected = selection;
+  }
 
   void setFilePath(String filePath) {
     this.filePath = filePath;
+  }
+
+  @override
+  String toString() {
+    return "Ticket - id: $id - fileUrl: $fileUrl - filePath: $filePath - isSelected: $isSelected.";
   }
 
   @override
