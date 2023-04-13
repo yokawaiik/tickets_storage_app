@@ -30,6 +30,13 @@ dev_dependencies:
 
   isar_generator: ^3.0.5
   build_runner: ^2.3.3
+  flutter_launcher_icons: ^0.13.0
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
+  min_sdk_android: 22 # android min sdk min:16, default 21
 
 flutter:
   uses-material-design: true
