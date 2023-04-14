@@ -1,8 +1,9 @@
-import 'package:documents_saver_app/src/features/ticket_storage/domain/repository/file_manager_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../domain/repositories/file_manager_repository.dart';
 
 import '../../../../theme/theme.dart';
 import '../../domain/models/ticket.dart';

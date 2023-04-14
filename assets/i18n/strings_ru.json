@@ -1,0 +1,20 @@
+{
+  "appName": "Tickets storage",
+  "storagePage": {
+    "appbar": { "title": "Хранилище билетов" }
+  },
+  "settingsPage": {
+    "appbar": { "title": "Настройки" },
+    "locales": [
+      {
+        "title": "Автоматически"
+      },
+      {
+        "title": "English"
+      },
+      {
+        "title": "Русский"
+      }
+    ]
+  }
+}

@@ -1,6 +1,7 @@
 import 'package:documents_saver_app/src/router/router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
+import '../features/settings/settings.dart';
 import '../features/ticket_storage/presentation/bloc/tickets_bloc.dart';
 import '../features/ticket_storage/ticket_storage.dart';
 
@@ -28,31 +29,26 @@ class AppRouter {
           //   );
           // },
           builder: (context, goRouterState) {
-            return TicketStoragePage();
+            return const TicketStoragePage();
           },
         ),
         GoRoute(
           name: routes_constants.ticketDetailPage,
           path: routes_constants.ticketDetailPagePath,
           builder: (context, state) {
-            // final ticketId = state
-            //     .queryParams[routes_constants.ticketDetailPageQueryParamIdPath];
-            // final ticketId = state
-            //     .queryParams[routes_constants.ticketDetailPageQueryParamIdPath];
-
             final queryParams =
                 TicketDetailPageQueryParams.fromParamsMap(state.queryParams);
 
             return TicketDetailPage(queryParams: queryParams);
           },
         ),
-        // GoRoute(
-        //   name: routes_constants.error,
-        //   path: routes_constants.errorPath,
-        //   builder: (context, state) {
-        //     return const ErrorScreen();
-        //   },
-        // ),
+        GoRoute(
+          name: routes_constants.settingsPage,
+          path: routes_constants.settingsPagePath,
+          builder: (context, state) {
+            return SettingsPage();
+          },
+        ),
       ],
     );
   }

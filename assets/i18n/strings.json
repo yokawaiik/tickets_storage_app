@@ -1,0 +1,20 @@
+{
+  "appName": "Tickets storage",
+  "storagePage": {
+    "appbar": { "title": "Tickets storage" }
+  },
+  "settingsPage": {
+    "appbar": { "title": "Settings" },
+    "locales": [
+      {
+        "title": "Auto"
+      },
+      {
+        "title": "English"
+      },
+      {
+        "title": "Russian"
+      }
+    ]
+  }
+}

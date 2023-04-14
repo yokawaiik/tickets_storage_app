@@ -9,7 +9,7 @@ import 'package:meta/meta.dart';
 
 import '../../domain/enums/error_situation.dart';
 import '../../domain/models/ticket.dart';
-import '../../domain/repository/tickets_repository.dart';
+import '../../domain/repositories/tickets_repository.dart';
 
 import '../../data/constants/constants.dart' as constants;
 

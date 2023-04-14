@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
-/// Locales: 1
-/// Strings: 2
+/// Locales: 2
+/// Strings: 12 (6 per locale)
 ///
-/// Built on 2023-04-14 at 05:28 UTC
+/// Built on 2023-04-14 at 18:10 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -22,7 +22,8 @@ const AppLocale _baseLocale = AppLocale.en;
 /// - Locale locale = AppLocale.en.flutterLocale // get flutter locale from enum
 /// - if (LocaleSettings.currentLocale == AppLocale.en) // locale check
 enum AppLocale with BaseAppLocale<AppLocale, _TranslationsEn> {
-	en(languageCode: 'en', build: _TranslationsEn.build);
+	en(languageCode: 'en', build: _TranslationsEn.build),
+	ru(languageCode: 'ru', build: _TranslationsRu.build);
 
 	const AppLocale({required this.languageCode, this.scriptCode, this.countryCode, required this.build}); // ignore: unused_element
 
@@ -148,6 +149,7 @@ class _TranslationsEn implements BaseTranslations<AppLocale, _TranslationsEn> {
 	// Translations
 	String get appName => 'Tickets storage';
 	late final _TranslationsStoragePageEn storagePage = _TranslationsStoragePageEn._(_root);
+	late final _TranslationsSettingsPageEn settingsPage = _TranslationsSettingsPageEn._(_root);
 }
 
 // Path: storagePage
@@ -157,7 +159,178 @@ class _TranslationsStoragePageEn {
 	final _TranslationsEn _root; // ignore: unused_field
 
 	// Translations
-	String get appbarTitle => 'Tickets storage';
+	late final _TranslationsStoragePageAppbarEn appbar = _TranslationsStoragePageAppbarEn._(_root);
+}
+
+// Path: settingsPage
+class _TranslationsSettingsPageEn {
+	_TranslationsSettingsPageEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	late final _TranslationsSettingsPageAppbarEn appbar = _TranslationsSettingsPageAppbarEn._(_root);
+	List<dynamic> get locales => [
+		_TranslationsSettingsPage$locales$0i0$En._(_root),
+		_TranslationsSettingsPage$locales$0i1$En._(_root),
+		_TranslationsSettingsPage$locales$0i2$En._(_root),
+	];
+}
+
+// Path: storagePage.appbar
+class _TranslationsStoragePageAppbarEn {
+	_TranslationsStoragePageAppbarEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Tickets storage';
+}
+
+// Path: settingsPage.appbar
+class _TranslationsSettingsPageAppbarEn {
+	_TranslationsSettingsPageAppbarEn._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Settings';
+}
+
+// Path: settingsPage.locales.0
+class _TranslationsSettingsPage$locales$0i0$En {
+	_TranslationsSettingsPage$locales$0i0$En._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Auto';
+}
+
+// Path: settingsPage.locales.1
+class _TranslationsSettingsPage$locales$0i1$En {
+	_TranslationsSettingsPage$locales$0i1$En._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'English';
+}
+
+// Path: settingsPage.locales.2
+class _TranslationsSettingsPage$locales$0i2$En {
+	_TranslationsSettingsPage$locales$0i2$En._(this._root);
+
+	final _TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get title => 'Russian';
+}
+
+// Path: <root>
+class _TranslationsRu extends _TranslationsEn {
+
+	/// You can call this constructor and build your own translation instance of this locale.
+	/// Constructing via the enum [AppLocale.build] is preferred.
+	_TranslationsRu.build({Map<String, Node>? overrides, PluralResolver? cardinalResolver, PluralResolver? ordinalResolver})
+		: assert(overrides == null, 'Set "translation_overrides: true" in order to enable this feature.'),
+		  $meta = TranslationMetadata(
+		    locale: AppLocale.ru,
+		    overrides: overrides ?? {},
+		    cardinalResolver: cardinalResolver,
+		    ordinalResolver: ordinalResolver,
+		  ),
+		  super.build(cardinalResolver: cardinalResolver, ordinalResolver: ordinalResolver) {
+		$meta.setFlatMapFunction(_flatMapFunction);
+	}
+
+	/// Metadata for the translations of <ru>.
+	@override final TranslationMetadata<AppLocale, _TranslationsEn> $meta;
+
+	/// Access flat map
+	@override dynamic operator[](String key) => $meta.getTranslation(key) ?? super.$meta.getTranslation(key);
+
+	@override late final _TranslationsRu _root = this; // ignore: unused_field
+
+	// Translations
+	@override String get appName => 'Tickets storage';
+	@override late final _TranslationsStoragePageRu storagePage = _TranslationsStoragePageRu._(_root);
+	@override late final _TranslationsSettingsPageRu settingsPage = _TranslationsSettingsPageRu._(_root);
+}
+
+// Path: storagePage
+class _TranslationsStoragePageRu extends _TranslationsStoragePageEn {
+	_TranslationsStoragePageRu._(_TranslationsRu root) : this._root = root, super._(root);
+
+	@override final _TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override late final _TranslationsStoragePageAppbarRu appbar = _TranslationsStoragePageAppbarRu._(_root);
+}
+
+// Path: settingsPage
+class _TranslationsSettingsPageRu extends _TranslationsSettingsPageEn {
+	_TranslationsSettingsPageRu._(_TranslationsRu root) : this._root = root, super._(root);
+
+	@override final _TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override late final _TranslationsSettingsPageAppbarRu appbar = _TranslationsSettingsPageAppbarRu._(_root);
+	@override List<dynamic> get locales => [
+		_TranslationsSettingsPage$locales$0i0$Ru._(_root),
+		_TranslationsSettingsPage$locales$0i1$Ru._(_root),
+		_TranslationsSettingsPage$locales$0i2$Ru._(_root),
+	];
+}
+
+// Path: storagePage.appbar
+class _TranslationsStoragePageAppbarRu extends _TranslationsStoragePageAppbarEn {
+	_TranslationsStoragePageAppbarRu._(_TranslationsRu root) : this._root = root, super._(root);
+
+	@override final _TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Хранилище билетов';
+}
+
+// Path: settingsPage.appbar
+class _TranslationsSettingsPageAppbarRu extends _TranslationsSettingsPageAppbarEn {
+	_TranslationsSettingsPageAppbarRu._(_TranslationsRu root) : this._root = root, super._(root);
+
+	@override final _TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Настройки';
+}
+
+// Path: settingsPage.locales.0
+class _TranslationsSettingsPage$locales$0i0$Ru extends _TranslationsSettingsPage$locales$0i0$En {
+	_TranslationsSettingsPage$locales$0i0$Ru._(_TranslationsRu root) : this._root = root, super._(root);
+
+	@override final _TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Автоматически';
+}
+
+// Path: settingsPage.locales.1
+class _TranslationsSettingsPage$locales$0i1$Ru extends _TranslationsSettingsPage$locales$0i1$En {
+	_TranslationsSettingsPage$locales$0i1$Ru._(_TranslationsRu root) : this._root = root, super._(root);
+
+	@override final _TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'English';
+}
+
+// Path: settingsPage.locales.2
+class _TranslationsSettingsPage$locales$0i2$Ru extends _TranslationsSettingsPage$locales$0i2$En {
+	_TranslationsSettingsPage$locales$0i2$Ru._(_TranslationsRu root) : this._root = root, super._(root);
+
+	@override final _TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get title => 'Русский';
 }
 
 /// Flat map(s) containing all translations.
@@ -167,7 +340,25 @@ extension on _TranslationsEn {
 	dynamic _flatMapFunction(String path) {
 		switch (path) {
 			case 'appName': return 'Tickets storage';
-			case 'storagePage.appbarTitle': return 'Tickets storage';
+			case 'storagePage.appbar.title': return 'Tickets storage';
+			case 'settingsPage.appbar.title': return 'Settings';
+			case 'settingsPage.locales.0.title': return 'Auto';
+			case 'settingsPage.locales.1.title': return 'English';
+			case 'settingsPage.locales.2.title': return 'Russian';
+			default: return null;
+		}
+	}
+}
+
+extension on _TranslationsRu {
+	dynamic _flatMapFunction(String path) {
+		switch (path) {
+			case 'appName': return 'Tickets storage';
+			case 'storagePage.appbar.title': return 'Хранилище билетов';
+			case 'settingsPage.appbar.title': return 'Настройки';
+			case 'settingsPage.locales.0.title': return 'Автоматически';
+			case 'settingsPage.locales.1.title': return 'English';
+			case 'settingsPage.locales.2.title': return 'Русский';
 			default: return null;
 		}
 	}

@@ -7,10 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../global/widgets/widgets.dart';
 import '../../../../i18n/translations.g.dart';
 import '../bloc/tickets_bloc.dart';
 import '../widgets/widgets.dart';
 import '../../utils/utils.dart' as utils;
+
+import '../../../../router/router.dart' as router;
 
 import '../../data/constants/constants.dart' as constants;
 
@@ -107,15 +110,21 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         key: _scaffoldMessengerKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text(t.storagePage.appbarTitle),
+          title: Text(t.storagePage.appbar.title),
           actions: [
-            IconButton(
-              onPressed: _toggleSelection,
-              tooltip: "Select group",
-              isSelected: _isSelectionMode,
-              selectedIcon: const Icon(Icons.library_add_check),
-              icon: const Icon(Icons.library_add_check_outlined),
-            )
+            // todo:
+
+            PopupMenuButton(
+              icon: const Icon(Icons.more_vert_rounded),
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  child: const Text("Settings"),
+                  onTap: () {
+                    context.pushNamed(router.settingsPage);
+                  },
+                ),
+              ],
+            ),
           ],
         ),
         body: RefreshIndicator(
@@ -238,6 +247,25 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                 onPressed: _addLink,
                 label: const Text("Add"),
               ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
+        bottomNavigationBar: BottomAppBar(
+          child: IconTheme(
+            data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+            child: Row(
+              children: <Widget>[
+                IconButton(
+                  color: colorScheme.onPrimaryContainer,
+                  onPressed: _toggleSelection,
+                  tooltip: "Select group",
+                  isSelected: _isSelectionMode,
+                  selectedIcon: const Icon(Icons.library_add_check),
+                  icon: const Icon(Icons.library_add_check_outlined),
+                )
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
