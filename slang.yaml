@@ -1,0 +1,15 @@
+base_locale: en
+# fallback_strategy: base_locale
+input_directory: assets/i18n
+input_file_pattern: .json
+output_directory: lib/src/i18n
+output_file_name: translations.g.dart
+output_format: single_file
+locale_handling: true
+flutter_integration: true
+# namespaces: false
+translate_var: t
+# param_case: camel
+string_interpolation: dart
+translation_overrides: false
+

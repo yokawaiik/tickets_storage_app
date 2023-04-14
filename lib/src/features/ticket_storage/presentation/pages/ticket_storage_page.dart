@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../i18n/translations.g.dart';
 import '../bloc/tickets_bloc.dart';
 import '../widgets/widgets.dart';
 import '../../utils/utils.dart' as utils;
@@ -68,6 +69,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final t = Translations.of(context);
+
     return BlocListener<TicketsBloc, TicketsState>(
       bloc: _ticketsBloc,
       listener: (context, state) {
@@ -104,7 +107,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         key: _scaffoldMessengerKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text("Tickets storage"),
+          title: Text(t.storagePage.appbarTitle),
           actions: [
             IconButton(
               onPressed: _toggleSelection,
