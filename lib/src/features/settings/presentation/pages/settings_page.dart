@@ -17,7 +17,7 @@ class SettingsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(t.settingsPage.appbar.title),
+        title: Text(t.strings.settingsPage.appbar.title),
       ),
       body: BlocBuilder<SettingsBloc, SettingsState>(
         bloc: _settingsBloc,
@@ -34,8 +34,8 @@ class SettingsPage extends StatelessWidget {
                         .map(
                           (locale) => DropdownMenuItem(
                             value: locale,
-                            child: Text(t.settingsPage.locales[locale.index]
-                                .title as String),
+                            child: Text(t.strings.settingsPage
+                                .locales[locale.index].title as String),
                           ),
                         )
                         .toList()

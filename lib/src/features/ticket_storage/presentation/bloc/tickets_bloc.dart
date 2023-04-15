@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
+import 'package:documents_saver_app/src/i18n/translations.g.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
@@ -85,7 +86,10 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
 
         emit(AddedSingleTicketsState(addedTicket));
       } on TicketsException catch (e) {
+        // TranslationProvider.of(context).flutterLocale
+
         debugPrint("AddTicketEvent - TicketsException - e: $e");
+
         emit(ErrorTicketsState(e.message));
       } catch (e) {
         debugPrint("AddTicketEvent - e: $e");

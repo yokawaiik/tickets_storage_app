@@ -1,7 +1,6 @@
 import 'package:documents_saver_app/src/features/settings/data/storage/settings_storage.dart';
 import 'package:documents_saver_app/src/features/settings/domain/enums/locale_variant.dart';
 
-import '../../../../i18n/translations.g.dart';
 import '../../data/constants/constants.dart' as constants;
 import '../../utils/utils.dart';
 

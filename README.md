@@ -30,13 +30,14 @@ A small application project where the user can differentiate between different t
 - [x] get_it - service locator to dependencies management;
 - [x] go_router - navigation;
 - [x] flutter_download_manager - to manage download and show progress;
-- [ ] easy_localization - to localize app;
+- [ ] slang - to localize app;
 - [x] and others dependencies...
 
 ## Features
 
 ### Main
 - [x] App icon;
+- [ ] Settings;
 - [ ] Localization.
 
 ### Tickets storage

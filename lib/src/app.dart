@@ -32,7 +32,7 @@ class App extends StatelessWidget {
             // locale: TranslationProvider.of(context),
             supportedLocales: AppLocaleUtils.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            title: t.appName,
+            title: t.strings.appName,
             theme: _appTheme.theme,
             routerConfig: _appRouter.config,
           );

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:documents_saver_app/src/features/ticket_storage/domain/enums/error_situation.dart';
+import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,8 +48,6 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     _isSelectionMode = false;
 
     _scrollController.addListener(() async {
-      debugPrint(
-          "_TicketStoragePageState - initState - _scrollController.addListener");
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
         if (_ticketsBloc.tickets.length != _ticketsBloc.totalCountTickets) {
@@ -77,17 +76,28 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     return BlocListener<TicketsBloc, TicketsState>(
       bloc: _ticketsBloc,
       listener: (context, state) {
-        late final String message;
+        late final String? message;
 
         if (state is ErrorTicketsState) {
-          message = state.error.toString();
+          if (state.error is TicketsException) {
+            // todo: how to do delete it
+            message = (state.error as TicketsException).message;
+          } else {
+            // message = "Something went wrong.";
+            message = t.strings.storagePage.snakbarMessages.unexpected;
+          }
         } else if (state is RemovedSingleTicketsState) {
-          message = "Was deleted: ${state.removedTicket.fileUrl}";
+          // message = "Was deleted: ${state.removedTicket.fileUrl}";
+          message = t.strings.storagePage.snakbarMessages
+              .removedSingle(fileUrl: (state).removedTicket.fileUrl);
         } else if (state is RemovedSelectedTicketsState) {
-          message = "Selected tickets were deleted.";
+          // message = "Selected tickets were deleted.";
+          message = t.strings.storagePage.snakbarMessages.removedSelected;
         } else {
-          message = "Something went wrong.";
+          message = t.strings.storagePage.snakbarMessages.unexpected;
         }
+
+        // do anything
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -110,7 +120,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         key: _scaffoldMessengerKey,
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: Text(t.storagePage.appbar.title),
+          title: Text(t.strings.storagePage.appbar.title),
           actions: [
             // todo:
 
@@ -118,7 +128,9 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
               icon: const Icon(Icons.more_vert_rounded),
               itemBuilder: (_) => [
                 PopupMenuItem(
-                  child: const Text("Settings"),
+                  // child: const Text("Settings"),
+                  child: Text(
+                      t.strings.storagePage.appbar.popupMenuButton.settings),
                   onTap: () {
                     context.pushNamed(router.settingsPage);
                   },
@@ -187,9 +199,12 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
 
                     if (_ticketsBloc.tickets.length ==
                         _ticketsBloc.totalCountTickets) {
-                      return const SizedBox(
+                      return SizedBox(
                         height: 40,
-                        child: Center(child: Text("There is nothing more...")),
+                        // child: Center(child: Text("There is nothing more...")),
+                        child: Center(
+                            child:
+                                Text(t.strings.storagePage.body.noMoreItems)),
                       );
                     }
 
@@ -212,11 +227,20 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                   return ListTicketItemWidget(
                     key: Key(ticket.hashCode.toString()),
                     ticket: ticket,
-                    title: "Ticket",
-                    subtitleFileDownloaded: "Файл загружен",
-                    subtitleFileDownloading: "Загрузка",
-                    subtitleFileDownload: "Ожидает начала загрузки",
-                    subtitleFileError: "Ошибка при загрузке",
+                    // title: "Ticket",
+                    // subtitleFileDownloaded: "Файл загружен",
+                    // subtitleFileDownloading: "Загрузка",
+                    // subtitleFileDownload: "Ожидает начала загрузки",
+                    // subtitleFileError: "Ошибка при загрузке",
+                    title: t.strings.storagePage.body.listTicketItem.title,
+                    subtitleFileDownloaded: t.strings.storagePage.body
+                        .listTicketItem.subtitleFileDownload,
+                    subtitleFileDownloading: t.strings.storagePage.body
+                        .listTicketItem.subtitleFileDownloading,
+                    subtitleFileDownload: t.strings.storagePage.body
+                        .listTicketItem.subtitleFileDownloaded,
+                    subtitleFileError: t.strings.storagePage.body.listTicketItem
+                        .subtitleFileError,
                     scaffoldMessengerKey: _scaffoldMessengerKey,
                     onDismissed: () {
                       _ticketsBloc.add(
@@ -241,13 +265,12 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         floatingActionButton: _isSelectionMode
             ? FloatingActionButton.extended(
                 onPressed: _deleteSelected,
-                label: const Text("Delete selected"),
+                label: Text(t.strings.storagePage.fab.deleteSelected),
               )
             : FloatingActionButton.extended(
-                onPressed: _addLink,
-                label: const Text("Add"),
+                onPressed: () => _addLink(context),
+                label: Text(t.strings.storagePage.fab.add),
               ),
-        // floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
         floatingActionButtonLocation: FloatingActionButtonLocation.endContained,
         bottomNavigationBar: BottomAppBar(
           child: IconTheme(
@@ -257,7 +280,8 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                 IconButton(
                   color: colorScheme.onPrimaryContainer,
                   onPressed: _toggleSelection,
-                  tooltip: "Select group",
+                  // tooltip: "Select group",
+                  tooltip: t.strings.storagePage.bottomAppBar.selection.tooltip,
                   isSelected: _isSelectionMode,
                   selectedIcon: const Icon(Icons.library_add_check),
                   icon: const Icon(Icons.library_add_check_outlined),
@@ -270,7 +294,9 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     );
   }
 
-  void _addLink() async {
+  void _addLink(BuildContext context) async {
+    final t = Translations.of(context);
+
     final clipboardData = await Clipboard.getData('text/plain');
 
     if (clipboardData?.text != null) {
@@ -324,9 +350,23 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                     child: Column(
                       children: [
                         DefaultTextField(
-                          labelText: "PDF file url",
+                          labelText: t.strings.storagePage.modalBottomSheet
+                              .fileUrlTextField,
                           controller: _ticketUrlTextFieldController,
-                          validator: (value) => utils.checkFileUrl(value),
+                          validator: (value) => utils.checkFileUrl(
+                            value,
+                            emptyLengthMessage:
+                                t.strings.validators.emptyLengthMessage,
+                            minLength: 10,
+                            minLengthMessage: t.strings.validators
+                                .minLengthMessage(minLength: 10),
+                            maxLength: 500,
+                            maxLengthMessage: t.strings.validators
+                                .maxLengthMessage(maxLength: 500),
+                            linkMessage: t.strings.validators.linkMessage,
+                            extensionMessage:
+                                t.strings.validators.extensionMessage,
+                          ),
                         ),
                         const SizedBox(
                           height: 20,
@@ -337,7 +377,9 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                                   _addFormKey.currentState?.validate() == false
                               ? null
                               : () => addTicket(),
-                          child: const Text('Добавить'),
+                          child: Text(
+                            t.strings.storagePage.modalBottomSheet.addButton,
+                          ),
                         ),
                       ],
                     ),

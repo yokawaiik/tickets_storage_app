@@ -1,13 +1,46 @@
 {
   "appName": "Tickets storage",
   "storagePage": {
-    "appbar": { "title": "Хранилище билетов" }
+    "appbar": {
+      "title": "Хранилище билетов",
+      "popupMenuButton": {
+        "settings": "Настройки"
+      }
+    },
+    "snakbarMessages": {
+      "removedSingle": "Удален: ${fileUrl}.",
+      "removedSelected": "Выбранные билеты были удалены.",
+      "unexpected": "Что-то пошло не так."
+    },
+    "body": {
+      "noMoreItems": "Больше ничего нет...",
+      "listTicketItem": {
+        "title": "Билет",
+        "subtitleFileDownloaded": "Файл загружен",
+        "subtitleFileDownloading": "Загрузка",
+        "subtitleFileDownload": "Ожидание загрузки",
+        "subtitleFileError": "Ошибка при загрузке"
+      }
+    },
+    "fab": {
+      "deleteSelected": "Удалить выбранные",
+      "add": "Добавить"
+    },
+    "bottomAppBar": {
+      "selection": {
+        "tooltip": "Выбрать несколько"
+      }
+    },
+    "modalBottomSheet": {
+      "fileUrlTextField": "Ссылка на PDF файл",
+      "addButton": "Добавить"
+    }
   },
   "settingsPage": {
     "appbar": { "title": "Настройки" },
     "locales": [
       {
-        "title": "Автоматически"
+        "title": "Язык устройства"
       },
       {
         "title": "English"
@@ -16,5 +49,12 @@
         "title": "Русский"
       }
     ]
+  },
+  "validators": {
+    "minLengthMessage": "Значение должно быть не менее ${minLength} символов.",
+    "maxLengthMessage": "Значение должно быть не более ${maxLength} символов.",
+    "emptyLengthMessage": "Это поле должно быть заполнено.",
+    "linkMessage": "Ссылка не корректна.",
+    "extensionMessage": "Файлы с таким расширением не разрешены."
   }
 }

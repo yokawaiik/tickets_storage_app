@@ -1,7 +1,40 @@
 {
   "appName": "Tickets storage",
   "storagePage": {
-    "appbar": { "title": "Tickets storage" }
+    "appbar": {
+      "title": "Tickets storage",
+      "popupMenuButton": {
+        "settings": "Settings"
+      }
+    },
+    "snakbarMessages": {
+      "removedSingle": "Was deleted: ${fileUrl}.",
+      "removedSelected": "Selected tickets were deleted.",
+      "unexpected": "Something went wrong."
+    },
+    "body": {
+      "noMoreItems": "There is nothing more...",
+      "listTicketItem": {
+        "title": "Ticket",
+        "subtitleFileDownloaded": "File was downloaded",
+        "subtitleFileDownloading": "Downloading",
+        "subtitleFileDownload": "Pending downloading",
+        "subtitleFileError": "Downloading error"
+      }
+    },
+    "fab": {
+      "deleteSelected": "Delete selected",
+      "add": "Add"
+    },
+    "bottomAppBar": {
+      "selection": {
+        "tooltip": "Select group"
+      }
+    },
+    "modalBottomSheet": {
+      "fileUrlTextField": "PDF file url",
+      "addButton": "Add"
+    }
   },
   "settingsPage": {
     "appbar": { "title": "Settings" },
@@ -16,5 +49,12 @@
         "title": "Russian"
       }
     ]
+  },
+  "validators": {
+    "minLengthMessage": "This field must be more then ${minLength}.",
+    "maxLengthMessage": "This field must be less then ${maxLength}.",
+    "emptyLengthMessage": "This field is required.",
+    "linkMessage": "Link is wrong.",
+    "extensionMessage": "Such a file isn't allowed."
   }
 }
