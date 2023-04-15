@@ -5,6 +5,8 @@ abstract class SettingsState extends Equatable {
 
   AppLocale get currentAppLocale => indexToAppLocale(currentLocale.index);
 
+  TranslationsEn get t => indexToAppLocale(currentLocale.index).build();
+
   const SettingsState({
     this.currentLocale = LocaleVariant.auto,
   });

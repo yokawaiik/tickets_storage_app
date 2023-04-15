@@ -18,16 +18,6 @@ class AppRouter {
         GoRoute(
           name: routes_constants.ticketsPage,
           path: routes_constants.ticketsPagePath,
-          // builder: (context, goRouterState) {
-          //   return BlocListener<AuthenticationCubit, AuthenticationState>(
-          //     listener: (ctx, state) {
-          //       if (state is! AuthenticatedState) {
-          //         context.pushReplacementNamed(routes_constants.auth);
-          //       }
-          //     },
-          //     child: const HomeScreen(),
-          //   );
-          // },
           builder: (context, goRouterState) {
             return const TicketStoragePage();
           },

@@ -1,8 +1,12 @@
+import 'package:documents_saver_app/src/features/ticket_storage/presentation/bloc/tickets_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../i18n/translations.g.dart';
+import '../../../settings/presentation/bloc/settings_bloc.dart';
 import '../../domain/repositories/file_manager_repository.dart';
 
 import '../../../../theme/theme.dart';
@@ -54,9 +58,12 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
   late final FileManagerRepository _fileManagerRepository;
   DownloadTask? _downloadTask;
 
+  TranslationsEn get _t => context.read<SettingsBloc>().state.t;
+
   @override
   void initState() {
     _fileManagerRepository = FileManagerRepository();
+
     if (widget.ticket.filePath != null) {
       _fileStatus = _FileStatus.downloaded;
     } else {
@@ -64,7 +71,6 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
     }
 
     if (!widget.isSelectionMode) {
-      // todo: check it
       widget.ticket.setSelection(false);
     }
 
@@ -89,7 +95,8 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
               backgroundColor: ColorConstants.deleteColor,
               foregroundColor: Colors.white,
               icon: Icons.delete,
-              label: 'Delete',
+              label: _t.strings.storagePage.body.listTicketItem.slidableAction
+                  .delete,
             ),
           ],
         ),
@@ -258,7 +265,9 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
     if (widget.ticket.filePath == null) {
       ScaffoldMessenger.of(widget.scaffoldMessengerKey.currentContext!)
           .showSnackBar(
-        const SnackBar(content: Text("First, you need to save file.")),
+        SnackBar(
+            content:
+                Text(_t.strings.storagePage.snakbarMessages.requiredSaveFile)),
       );
       return;
     }

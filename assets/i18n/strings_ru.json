@@ -19,7 +19,10 @@
         "subtitleFileDownloaded": "Файл загружен",
         "subtitleFileDownloading": "Загрузка",
         "subtitleFileDownload": "Ожидание загрузки",
-        "subtitleFileError": "Ошибка при загрузке"
+        "subtitleFileError": "Ошибка при загрузке",
+        "slidableAction": {
+          "delete": "Удалить"
+        }
       }
     },
     "fab": {
@@ -55,6 +58,6 @@
     "maxLengthMessage": "Значение должно быть не более ${maxLength} символов.",
     "emptyLengthMessage": "Это поле должно быть заполнено.",
     "linkMessage": "Ссылка не корректна.",
-    "extensionMessage": "Файлы с таким расширением не разрешены."
+    "extensionMessage": "Файлы с таким расширениемне разрешены."
   }
 }

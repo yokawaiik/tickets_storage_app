@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:documents_saver_app/src/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:documents_saver_app/src/features/ticket_storage/domain/enums/ticket_exception_code.dart';
 import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
 import 'package:documents_saver_app/src/i18n/translations.g.dart';
 import 'package:equatable/equatable.dart';
@@ -28,15 +30,22 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
 
   late final TicketsRepository _ticketsRepository;
 
-  TicketsBloc() : super(InitialTicketsState()) {
-    _ticketsRepository = TicketsRepository();
+  late final SettingsBloc _settingsBloc;
+  TranslationsEn get _t => _settingsBloc.state.t;
+
+  TicketsBloc({
+    required SettingsBloc settingsBloc,
+  }) : super(InitialTicketsState()) {
+    _ticketsRepository = TicketsRepository(settingsBloc);
     _totalCountTickets = 0;
     _offset = 0;
+
+    _settingsBloc = settingsBloc;
 
     on<GetTicketsEvent>((event, emit) async {
       try {
         debugPrint(
-            "GetTicketsEvent - constants.listPageLimit: ${constants.listPageLimit} - _offset : ${_offset}");
+            "GetTicketsEvent - constants.listPageLimit: ${constants.listPageLimit} - _offset : $_offset");
 
         if (event.inital == true) {
           _totalCountTickets = await _ticketsRepository.getTotalCountTickets();
@@ -55,7 +64,8 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(LoadedTicketsState(loadedTickets));
       } catch (e) {
         debugPrint("GetInitialTicketsEvent - e: $e");
-        emit(ErrorTicketsState("Tickets hasn't got from local storage."));
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.getTicketsEvent.error));
       }
     });
 
@@ -69,9 +79,19 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         );
 
         emit(LoadedSingleTicketState(loadedTickets));
+      } on TicketsException catch (e) {
+        debugPrint("GetSingleTicketsEvent - TicketsException - e: $e");
+
+        if (e.ticketExceptionCode == TicketExceptionCode.ticketWasNotFound) {
+          emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+              .presentation.ticketsBloc.getSingleTicketsEvent.notFound));
+        } else {
+          emit(ErrorTicketsState(_t.errorStrings.unexpected));
+        }
       } catch (e) {
         debugPrint("GetSingleTicketsEvent - e: $e");
-        emit(ErrorTicketsState("Tickets hasn't got from local storage."));
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.getSingleTicketsEvent.error));
       }
     });
 
@@ -86,14 +106,14 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
 
         emit(AddedSingleTicketsState(addedTicket));
       } on TicketsException catch (e) {
-        // TranslationProvider.of(context).flutterLocale
+        debugPrint(
+            "AddTicketEvent - TicketsException - e: $e, ticketExceptionCode: ${e.ticketExceptionCode}");
 
-        debugPrint("AddTicketEvent - TicketsException - e: $e");
-
-        emit(ErrorTicketsState(e.message));
+        emit(ErrorTicketsState(e));
       } catch (e) {
         debugPrint("AddTicketEvent - e: $e");
-        emit(ErrorTicketsState("Ticket wasn't added."));
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.addTicketEvent.error));
       }
     });
     on<DeletedTicketEvent>((event, emit) async {
@@ -108,7 +128,8 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(RemovedSingleTicketsState(ticket));
       } catch (e) {
         debugPrint("DeletedTicketEvent - e: $e");
-        emit(ErrorTicketsState("Ticket wasn't deleted."));
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.deletedTicketEvent.error));
       }
     });
     on<RefreshTicketsEvent>((event, emit) async {
@@ -128,7 +149,9 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(LoadedTicketsState(tickets));
       } catch (e) {
         debugPrint("RefreshTicketsEvent - e: $e");
-        emit(ErrorTicketsState("Can't loaded tickets."));
+
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.refreshTicketsEvent.error));
       } finally {
         event.completer?.complete();
       }
@@ -143,7 +166,8 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(SetSelectionSingleTicketsState(foundTicket));
       } catch (e) {
         debugPrint("SelectTicketEvent - e: $e");
-        emit(ErrorTicketsState("Can't select a ticket."));
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.setSelectionSingleTicketsEvent.error));
       }
     });
     on<ResetSelectionTicketsEvent>((event, emit) {
@@ -161,7 +185,8 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         emit(ResetSelectionTicketsState(resetSelectionTickets));
       } catch (e) {
         debugPrint("ResetSelectionTicketsEvent - e: $e");
-        emit(ErrorTicketsState("Can't reset selection."));
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.resetSelectionTicketsEvent.error));
       }
     });
     on<RemoveSelectedTicketsEvent>((event, emit) async {
@@ -181,12 +206,13 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         _tickets
             .removeWhere((ticket) => deleteSelectedTickets.contains(ticket));
 
-        debugPrint("deleteSelectedTickets: ${deleteSelectedTickets}");
+        debugPrint("deleteSelectedTickets: $deleteSelectedTickets");
 
         emit(RemovedSelectedTicketsState(deleteSelectedTickets));
       } catch (e) {
         debugPrint("DeleteSelectedTicketsEvent - e: $e");
-        emit(ErrorTicketsState("Can't reset selection."));
+        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
+            .presentation.ticketsBloc.removeSelectedTicketsEvent.error));
       }
     });
   }

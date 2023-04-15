@@ -2,6 +2,7 @@ import 'package:documents_saver_app/src/features/ticket_storage/domain/models/ti
 import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
+import '../../domain/enums/ticket_exception_code.dart';
 import '../../domain/models/ticket.dart';
 import './database_constants.dart' as database_constants;
 import 'collections/ticket_collection.dart';
@@ -65,22 +66,29 @@ class TicketStorageHelper {
   }
 
   Future<void> addTicket(String fileUrl, String id) async {
-    final isar = await _database;
+    try {
+      final isar = await _database;
 
-    await isar.writeTxn(() async {
-      final duplicate = await isar.ticketCollections.getByFileUrl(fileUrl);
+      await isar.writeTxn(() async {
+        final duplicate = await isar.ticketCollections.getByFileUrl(fileUrl);
 
-      if (duplicate != null) {
-        throw TicketsException("Duplicate ticket isn't allowed.");
-      }
+        if (duplicate != null) {
+          throw TicketsException(
+            "Duplicate ticket isn't allowed.",
+            TicketExceptionCode.duplicate,
+          );
+        }
 
-      await isar.ticketCollections.putByFileUrl(
-        TicketCollection(
-          fileUrl: fileUrl,
-          id: id,
-        ),
-      );
-    });
+        await isar.ticketCollections.putByFileUrl(
+          TicketCollection(
+            fileUrl: fileUrl,
+            id: id,
+          ),
+        );
+      });
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<Ticket?> getTicket(String fileUrl) async {
@@ -110,7 +118,6 @@ class TicketStorageHelper {
         await isar.ticketCollections.deleteById(id);
       });
     } catch (e) {
-      debugPrint("removeTicket: $e");
       rethrow;
     }
   }
@@ -145,7 +152,10 @@ class TicketStorageHelper {
     final gotTicketRaw = await isar.ticketCollections.getById(id);
 
     if (gotTicketRaw == null) {
-      throw TicketsException("Such a ticket wasn't found.");
+      throw TicketsException(
+        "Such a ticket wasn't found.",
+        TicketExceptionCode.ticketWasNotFound,
+      );
     }
 
     final ticket = Ticket(

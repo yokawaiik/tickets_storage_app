@@ -1,3 +1,51 @@
 {
-  "unexpected": "Что-то пошло не так..."
+  "unexpected": "Что-то пошло не так...",
+  "features": {
+    "ticketStorage": {
+      "repositories": {
+        "ticketsRepository": {
+          "addTicket": {
+            "notAdded": "Билет не был добавлен.",
+            "duplicate": "Дублирование запрещено."
+          },
+          "updateTicket": {
+            "notUpdated": "Билет не был обновлен."
+          },
+          "getSingleTicket": {
+            "itsNull": "Билет не найден."
+          }
+        }
+      },
+      "presentation": {
+        "ticketsBloc": {
+          "getTicketsEvent": {
+            "error": "Билеты не попали из локального хранилища."
+          },
+          "getSingleTicketsEvent": {
+            "notFound": "Такой билет не найден.",
+            "error": "Билет не попал из локального хранилища."
+          },
+          "addTicketEvent": {
+            "error": "Билет не добавлен.",
+            "duplicate": "Дублирование запрещено."
+          },
+          "deletedTicketEvent": {
+            "error": "Билет не удален."
+          },
+          "refreshTicketsEvent": {
+            "error": "Невозможно загрузить билеты."
+          },
+          "setSelectionSingleTicketsEvent": {
+            "error": "Невозможно выбрать билет."
+          },
+          "resetSelectionTicketsEvent": {
+            "error": "Невозможно сбросить выбор."
+          },
+          "removeSelectedTicketsEvent": {
+            "error": "Невозможно удалить выбранные билеты."
+          }
+        }
+      }
+    }
+  }
 }

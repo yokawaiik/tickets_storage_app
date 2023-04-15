@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:documents_saver_app/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:documents_saver_app/src/features/ticket_storage/domain/enums/error_situation.dart';
 import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
 import 'package:flutter/material.dart';
@@ -71,7 +72,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
 
-    final t = Translations.of(context);
+    final t = context.read<SettingsBloc>().state.t;
 
     return BlocListener<TicketsBloc, TicketsState>(
       bloc: _ticketsBloc,
@@ -79,25 +80,21 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         late final String? message;
 
         if (state is ErrorTicketsState) {
+          debugPrint("BlocListener state.error: ${state.error}");
+
           if (state.error is TicketsException) {
-            // todo: how to do delete it
             message = (state.error as TicketsException).message;
           } else {
-            // message = "Something went wrong.";
             message = t.strings.storagePage.snakbarMessages.unexpected;
           }
         } else if (state is RemovedSingleTicketsState) {
-          // message = "Was deleted: ${state.removedTicket.fileUrl}";
           message = t.strings.storagePage.snakbarMessages
               .removedSingle(fileUrl: (state).removedTicket.fileUrl);
         } else if (state is RemovedSelectedTicketsState) {
-          // message = "Selected tickets were deleted.";
           message = t.strings.storagePage.snakbarMessages.removedSelected;
         } else {
           message = t.strings.storagePage.snakbarMessages.unexpected;
         }
-
-        // do anything
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -122,13 +119,10 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
         appBar: AppBar(
           title: Text(t.strings.storagePage.appbar.title),
           actions: [
-            // todo:
-
             PopupMenuButton(
               icon: const Icon(Icons.more_vert_rounded),
               itemBuilder: (_) => [
                 PopupMenuItem(
-                  // child: const Text("Settings"),
                   child: Text(
                       t.strings.storagePage.appbar.popupMenuButton.settings),
                   onTap: () {
@@ -201,7 +195,6 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                         _ticketsBloc.totalCountTickets) {
                       return SizedBox(
                         height: 40,
-                        // child: Center(child: Text("There is nothing more...")),
                         child: Center(
                             child:
                                 Text(t.strings.storagePage.body.noMoreItems)),
@@ -227,18 +220,13 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                   return ListTicketItemWidget(
                     key: Key(ticket.hashCode.toString()),
                     ticket: ticket,
-                    // title: "Ticket",
-                    // subtitleFileDownloaded: "Файл загружен",
-                    // subtitleFileDownloading: "Загрузка",
-                    // subtitleFileDownload: "Ожидает начала загрузки",
-                    // subtitleFileError: "Ошибка при загрузке",
                     title: t.strings.storagePage.body.listTicketItem.title,
                     subtitleFileDownloaded: t.strings.storagePage.body
-                        .listTicketItem.subtitleFileDownload,
+                        .listTicketItem.subtitleFileDownloaded,
                     subtitleFileDownloading: t.strings.storagePage.body
                         .listTicketItem.subtitleFileDownloading,
                     subtitleFileDownload: t.strings.storagePage.body
-                        .listTicketItem.subtitleFileDownloaded,
+                        .listTicketItem.subtitleFileDownload,
                     subtitleFileError: t.strings.storagePage.body.listTicketItem
                         .subtitleFileError,
                     scaffoldMessengerKey: _scaffoldMessengerKey,
@@ -280,7 +268,6 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                 IconButton(
                   color: colorScheme.onPrimaryContainer,
                   onPressed: _toggleSelection,
-                  // tooltip: "Select group",
                   tooltip: t.strings.storagePage.bottomAppBar.selection.tooltip,
                   isSelected: _isSelectionMode,
                   selectedIcon: const Icon(Icons.library_add_check),
@@ -295,7 +282,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
   }
 
   void _addLink(BuildContext context) async {
-    final t = Translations.of(context);
+    final t = context.read<SettingsBloc>().state.t;
 
     final clipboardData = await Clipboard.getData('text/plain');
 

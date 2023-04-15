@@ -10,14 +10,16 @@ import '../router/app_router.dart';
 Future<void> dependenciesManager() async {
   try {
     // main or global
-    GetIt.instance.registerLazySingleton<AppRouter>(() => AppRouter());
-    GetIt.instance.registerLazySingleton<AppTheme>(() => AppTheme());
-
-    // feature ticket_storage
-    GetIt.instance.registerLazySingleton<TicketsBloc>(() => TicketsBloc());
+    GetIt.I.registerLazySingleton<AppRouter>(() => AppRouter());
+    GetIt.I.registerLazySingleton<AppTheme>(() => AppTheme());
 
     // feature settings
-    GetIt.instance.registerLazySingleton<SettingsBloc>(() => SettingsBloc());
+    GetIt.I.registerLazySingleton<SettingsBloc>(() => SettingsBloc());
+
+    // feature ticket_storage
+    GetIt.I.registerLazySingleton<TicketsBloc>(() => TicketsBloc(
+          settingsBloc: GetIt.I.get<SettingsBloc>(),
+        ));
   } catch (e) {
     debugPrint("Dependencies - error: $e");
     rethrow;

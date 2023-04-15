@@ -22,17 +22,15 @@ class App extends StatelessWidget {
       providers: [
         BlocProvider.value(value: _settingsBloc),
       ],
-      // todo: check: BlocBuilder<SettingsBloc, SettingsState>
       child: BlocBuilder<SettingsBloc, SettingsState>(
+        /// [SettingsBloc] is available for every widget in the app
         bloc: _settingsBloc..add(SetInitialSettingsEvent()),
         builder: (context, state) {
           return MaterialApp.router(
-            locale: TranslationProvider.of(context).flutterLocale,
-            // locale: state.currentAppLocale.flutterLocale,
-            // locale: TranslationProvider.of(context),
+            locale: state.currentAppLocale.flutterLocale,
             supportedLocales: AppLocaleUtils.supportedLocales,
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            title: t.strings.appName,
+            title: state.t.strings.appName,
             theme: _appTheme.theme,
             routerConfig: _appRouter.config,
           );

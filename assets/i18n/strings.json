@@ -10,7 +10,8 @@
     "snakbarMessages": {
       "removedSingle": "Was deleted: ${fileUrl}.",
       "removedSelected": "Selected tickets were deleted.",
-      "unexpected": "Something went wrong."
+      "unexpected": "Something went wrong.",
+      "requiredSaveFile": "First, you need to save file."
     },
     "body": {
       "noMoreItems": "There is nothing more...",
@@ -19,7 +20,10 @@
         "subtitleFileDownloaded": "File was downloaded",
         "subtitleFileDownloading": "Downloading",
         "subtitleFileDownload": "Pending downloading",
-        "subtitleFileError": "Downloading error"
+        "subtitleFileError": "Downloading error",
+        "slidableAction": {
+          "delete": "Delete"
+        }
       }
     },
     "fab": {
