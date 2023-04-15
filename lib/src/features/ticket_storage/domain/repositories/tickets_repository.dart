@@ -1,27 +1,32 @@
-
 import 'dart:core';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:documents_saver_app/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
+import 'package:get_it/get_it.dart';
 import 'package:isar/isar.dart';
 import 'package:nanoid/nanoid.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../../../i18n/translations.g.dart';
 import '../../data/database/tickets_storage_helper.dart';
+import '../enums/ticket_exception_code.dart';
 import '../models/ticket.dart';
 
 import 'package:path/path.dart' as path;
 
 class TicketsRepository {
   late final TicketStorageHelper _ticketStorage;
-  late final DownloadManager _dm;
+  late final SettingsBloc _settingsBloc;
 
-  TicketsRepository() {
+  TranslationsEn get _t => _settingsBloc.state.t;
+
+  TicketsRepository(SettingsBloc settingsBloc) {
     _ticketStorage = TicketStorageHelper.instance;
-    _dm = DownloadManager();
+    _settingsBloc = settingsBloc;
   }
 
   Future<int> getTotalCountTickets() async {
@@ -31,7 +36,7 @@ class TicketsRepository {
     } catch (e) {
       debugPrint(
           "TicketsRepository - getTotalCountTickets - e: ${e.toString()}");
-      throw Exception("Something went wrong.");
+      throw Exception(_t.errorStrings.unexpected);
     }
   }
 
@@ -42,7 +47,7 @@ class TicketsRepository {
       return tickets;
     } catch (e) {
       debugPrint("TicketsRepository - getTicketList - e: ${e.toString()}");
-      throw Exception("Something went wrong.");
+      throw Exception(_t.errorStrings.unexpected);
     }
   }
 
@@ -53,16 +58,38 @@ class TicketsRepository {
       final addedTicket = await _ticketStorage.getTicket(fileUrl);
 
       if (addedTicket == null) {
-        throw Exception("Ticket wasn't added.");
+        throw TicketsException(
+          _t.errorStrings.features.ticketStorage.repositories.ticketsRepository
+              .addTicket.notAdded,
+          TicketExceptionCode.duplicate,
+        );
       }
 
       return addedTicket;
     } on TicketsException catch (e) {
       debugPrint("TicketsRepository - addTicket - TicketsException - e: $e");
-      rethrow;
+
+      late final TicketExceptionCode ticketExceptionCode;
+      late final String message;
+      switch (e.ticketExceptionCode) {
+        case TicketExceptionCode.duplicate:
+          message = _t.errorStrings.features.ticketStorage.repositories
+              .ticketsRepository.addTicket.duplicate;
+          ticketExceptionCode = TicketExceptionCode.duplicate;
+          break;
+        default:
+          message = _t.errorStrings.unexpected;
+          ticketExceptionCode = TicketExceptionCode.any;
+          break;
+      }
+
+      throw TicketsException(
+        message,
+        ticketExceptionCode,
+      );
     } catch (e) {
       debugPrint("TicketsRepository - addTicket - e: ${e.toString()}");
-      throw Exception("Something went wrong.");
+      throw Exception(_t.errorStrings.unexpected);
     }
   }
 
@@ -73,13 +100,14 @@ class TicketsRepository {
       final addedTicket = await _ticketStorage.getTicket(ticket.fileUrl);
 
       if (addedTicket == null) {
-        throw Exception("Ticket wasnt't updated.");
+        throw Exception(_t.errorStrings.features.ticketStorage.repositories
+            .ticketsRepository.updateTicket.notUpdated);
       }
 
       return addedTicket;
     } catch (e) {
       debugPrint("TicketsRepository - updateTicket - e: ${e.toString()}");
-      throw Exception("Something went wrong.");
+      throw Exception(_t.errorStrings.unexpected);
     }
   }
 
@@ -98,7 +126,7 @@ class TicketsRepository {
           "TicketsRepository - removeTicket - PathNotFoundException - e: ${e.toString()}");
     } catch (e) {
       debugPrint("TicketsRepository - removeTicket - e: ${e.toString()}");
-      throw Exception("Something went wrong.");
+      throw Exception(_t.errorStrings.unexpected);
     }
   }
 
@@ -114,7 +142,7 @@ class TicketsRepository {
       }
     } catch (e) {
       debugPrint("TicketsRepository - removeGroupTickets - e: ${e.toString()}");
-      throw Exception("Something went wrong.");
+      throw Exception(_t.errorStrings.unexpected);
     }
   }
 
@@ -123,17 +151,19 @@ class TicketsRepository {
       final ticket = await _ticketStorage.getTicketById(id);
 
       if (ticket == null) {
-        throw TicketsException("Ticket wasnt't updated.");
+        throw TicketsException(_t.errorStrings.features.ticketStorage
+            .repositories.ticketsRepository.getSingleTicket.itsNull);
       }
 
       return ticket;
     } on TicketsException catch (e) {
       debugPrint(
           "TicketsRepository - removeGroupTickets - TicketsException - e: ${e.toString()}");
+
       rethrow;
     } catch (e) {
       debugPrint("TicketsRepository - removeGroupTickets - e: ${e.toString()}");
-      throw Exception("Something went wrong.");
+      throw Exception(_t.errorStrings.unexpected);
     }
   }
 }

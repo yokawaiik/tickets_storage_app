@@ -1,3 +1,51 @@
 {
-  "unexpected": "Something went wron..."
+  "unexpected": "Something went wron...",
+  "features": {
+    "ticketStorage": {
+      "repositories": {
+        "ticketsRepository": {
+          "addTicket": {
+            "notAdded": "Ticket wasn't added.",
+            "duplicate": "Duplicate isn't allowed."
+          },
+          "updateTicket": {
+            "notUpdated": "Ticket wasnt't updated."
+          },
+          "getSingleTicket": {
+            "itsNull": "Ticket wasn't found."
+          }
+        }
+      },
+      "presentation": {
+        "ticketsBloc": {
+          "getTicketsEvent": {
+            "error": "Tickets hasn't got from the local storage."
+          },
+          "getSingleTicketsEvent": {
+            "notFound": "Such a ticket wasn't found.",
+            "error": "A ticket hasn't got from the local storage."
+          },
+          "addTicketEvent": {
+            "error": "Ticket wasn't added.",
+            "duplicate": "Duplicate isn't allowed."
+          },
+          "deletedTicketEvent": {
+            "error": "Ticket wasn't deleted."
+          },
+          "refreshTicketsEvent": {
+            "error": "Can't loaded tickets."
+          },
+          "setSelectionSingleTicketsEvent": {
+            "error": "Can't select a ticket."
+          },
+          "resetSelectionTicketsEvent": {
+            "error": "Can't reset selection."
+          },
+          "removeSelectedTicketsEvent": {
+            "error": "Can't reset selection."
+          }
+        }
+      }
+    }
+  }
 }

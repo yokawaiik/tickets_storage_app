@@ -4,7 +4,8 @@ input_directory: assets/i18n
 input_file_pattern: .json
 output_directory: lib/src/i18n
 output_file_name: translations.g.dart
-locale_handling: true
+locale_handling: false # remove unused t variable, LocaleSettings, etc.
+translation_class_visibility: public
 flutter_integration: true
 translate_var: t
 string_interpolation: dart

@@ -1,4 +1,5 @@
 import 'package:documents_saver_app/src/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
@@ -13,7 +14,7 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final t = Translations.of(context);
+    final t = context.read<SettingsBloc>().state.t;
 
     return Scaffold(
       appBar: AppBar(
@@ -26,21 +27,32 @@ class SettingsPage extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                DropdownButton<LocaleVariant>(
-                  value: state.currentLocale,
-                  isExpanded: true,
-                  items: [
-                    ...LocaleVariant.values
-                        .map(
-                          (locale) => DropdownMenuItem(
-                            value: locale,
-                            child: Text(t.strings.settingsPage
-                                .locales[locale.index].title as String),
-                          ),
-                        )
-                        .toList()
-                  ],
-                  onChanged: (value) => _setLocale(context, value),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2<LocaleVariant>(
+                    value: state.currentLocale,
+                    isExpanded: true,
+                    items: [
+                      ...LocaleVariant.values
+                          .map(
+                            (locale) => DropdownMenuItem(
+                              value: locale,
+                              child: Text(t.strings.settingsPage
+                                  .locales[locale.index].title as String),
+                            ),
+                          )
+                          .toList()
+                    ],
+                    onChanged: (value) => _setLocale(context, value),
+                    buttonStyleData: const ButtonStyleData(
+                      height: 48,
+                    ),
+                    dropdownStyleData: const DropdownStyleData(
+                      offset: Offset(0, 20),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 48,
+                    ),
+                  ),
                 ),
               ],
             ),
