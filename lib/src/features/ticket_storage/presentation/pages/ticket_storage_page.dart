@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../global/widgets/widgets.dart';
 import '../../../../i18n/translations.g.dart';
+import '../../../../router/router.dart';
 import '../bloc/tickets_bloc.dart';
 import '../widgets/widgets.dart';
 import '../../utils/utils.dart' as utils;
@@ -20,8 +21,10 @@ import '../../../../router/router.dart' as router;
 import '../../data/constants/constants.dart' as constants;
 
 class TicketStoragePage extends StatefulWidget {
+  // final TicketStoragePageQueryParams queryParams;
   const TicketStoragePage({
     Key? key,
+    // required this.queryParams,
   }) : super(key: key);
 
   @override
@@ -232,7 +235,7 @@ class _TicketStoragePageState extends State<TicketStoragePage> {
                     scaffoldMessengerKey: _scaffoldMessengerKey,
                     onDismissed: () {
                       _ticketsBloc.add(
-                        DeletedTicketEvent(id: ticket.id),
+                        DeleteTicketEvent(id: ticket.id),
                       );
                     },
                     isSelectionMode: _isSelectionMode,

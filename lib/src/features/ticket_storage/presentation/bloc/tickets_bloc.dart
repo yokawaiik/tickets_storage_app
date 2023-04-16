@@ -83,15 +83,20 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         debugPrint("GetSingleTicketsEvent - TicketsException - e: $e");
 
         if (e.ticketExceptionCode == TicketExceptionCode.ticketWasNotFound) {
-          emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
-              .presentation.ticketsBloc.getSingleTicketsEvent.notFound));
+          emit(ErrorTicketsState(
+              _t.errorStrings.features.ticketStorage.presentation.ticketsBloc
+                  .getSingleTicketsEvent.notFound,
+              ErrorSituation.ticket));
         } else {
-          emit(ErrorTicketsState(_t.errorStrings.unexpected));
+          emit(ErrorTicketsState(
+              _t.errorStrings.unexpected, ErrorSituation.ticket));
         }
       } catch (e) {
         debugPrint("GetSingleTicketsEvent - e: $e");
-        emit(ErrorTicketsState(_t.errorStrings.features.ticketStorage
-            .presentation.ticketsBloc.getSingleTicketsEvent.error));
+        emit(ErrorTicketsState(
+            _t.errorStrings.features.ticketStorage.presentation.ticketsBloc
+                .getSingleTicketsEvent.error,
+            ErrorSituation.ticket));
       }
     });
 
@@ -116,7 +121,7 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
             .presentation.ticketsBloc.addTicketEvent.error));
       }
     });
-    on<DeletedTicketEvent>((event, emit) async {
+    on<DeleteTicketEvent>((event, emit) async {
       try {
         final ticket = _tickets.firstWhere((ticket) => ticket.id == event.id);
         await _ticketsRepository.removeTicket(ticket);
@@ -124,6 +129,17 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         _tickets.removeWhere((ticket) => ticket.id == event.id);
         _totalCountTickets--;
         _offset--;
+
+        if (_tickets.length <= constants.listPageLimit) {
+          /// load as much as was deleted
+          final loadedTickets = await _ticketsRepository.getTicketList(
+            1,
+            _offset,
+          );
+
+          _tickets.addAll(loadedTickets);
+          _offset += loadedTickets.length;
+        }
 
         emit(RemovedSingleTicketsState(ticket));
       } catch (e) {
@@ -194,6 +210,7 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
 
       try {
         final List<Ticket> deleteSelectedTickets = [];
+
         for (var ticket in _tickets) {
           if (ticket.isSelected) {
             ticket.setSelection(false);
@@ -202,9 +219,21 @@ class TicketsBloc extends Bloc<TicketsEvent, TicketsState> {
         }
 
         await _ticketsRepository.removeGroupTickets(deleteSelectedTickets);
-
         _tickets
             .removeWhere((ticket) => deleteSelectedTickets.contains(ticket));
+        _offset -= deleteSelectedTickets.length;
+        _totalCountTickets -= deleteSelectedTickets.length;
+
+        if (_tickets.length <= constants.listPageLimit) {
+          /// load as much as was deleted
+          final loadedTickets = await _ticketsRepository.getTicketList(
+            deleteSelectedTickets.length,
+            _offset,
+          );
+
+          _tickets.addAll(loadedTickets);
+          _offset += loadedTickets.length;
+        }
 
         debugPrint("deleteSelectedTickets: $deleteSelectedTickets");
 

@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:documents_saver_app/src/features/ticket_storage/presentation/bloc/tickets_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../../../i18n/translations.g.dart';
 import '../../../settings/presentation/bloc/settings_bloc.dart';
@@ -11,6 +14,8 @@ import '../../domain/repositories/file_manager_repository.dart';
 
 import '../../../../theme/theme.dart';
 import '../../domain/models/ticket.dart';
+
+import 'package:path/path.dart' show basename;
 
 import '../../../../router/router.dart' as router;
 
@@ -247,32 +252,59 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
         widget.ticket,
       );
 
-      widget.ticket.setFilePath(_downloadTask!.request.path);
+      _downloadTask?.progress.addListener(() async {
+        if (_downloadTask!.progress.value != 1.0) return;
 
-      await _fileManagerRepository.updateTicket(
-        widget.ticket,
-      );
+        final Directory appDocumentsDir =
+            await getApplicationDocumentsDirectory();
+        final fileName = basename(widget.ticket.fileUrl);
 
-      _fileStatus = _FileStatus.downloaded;
+        final saveFilePath = '${appDocumentsDir.path}/$fileName';
+
+        widget.ticket.setFilePath(_downloadTask!.request.path);
+
+        await _fileManagerRepository.updateTicket(
+          widget.ticket,
+        );
+
+        _fileStatus = _FileStatus.downloaded;
+        setState(() {});
+      });
     } catch (e) {
       _fileStatus = _FileStatus.error;
-    } finally {
       setState(() {});
     }
   }
 
-  void _openFile() {
+  void _openFile() async {
+    late final String? message;
     if (widget.ticket.filePath == null) {
+      message = _t.strings.storagePage.snakbarMessages.requiredSaveFile;
+    } else {
+      final isFileExists = File(widget.ticket.filePath!).existsSync();
+      // doesnNotExist
+      if (!isFileExists) {
+        message = _t.strings.storagePage.body.listTicketItem.file.doesnNotExist;
+        widget.ticket.setFilePath(null);
+        _fileStatus = _FileStatus.pending;
+        setState(() {});
+        await _fileManagerRepository.updateTicket(
+          widget.ticket,
+        );
+      } else {
+        message = null;
+      }
+    }
+
+    if (message != null) {
       ScaffoldMessenger.of(widget.scaffoldMessengerKey.currentContext!)
           .showSnackBar(
-        SnackBar(
-            content:
-                Text(_t.strings.storagePage.snakbarMessages.requiredSaveFile)),
+        SnackBar(content: Text(message)),
       );
       return;
     }
 
-    context.pushNamed(
+    await context.pushNamed(
       router.ticketDetailPage,
       queryParams: router.TicketDetailPageQueryParams(id: widget.ticket.id)
           .toParamsMap(),

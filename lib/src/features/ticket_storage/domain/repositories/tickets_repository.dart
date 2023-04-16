@@ -1,22 +1,15 @@
 import 'dart:core';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:documents_saver_app/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_download_manager/flutter_download_manager.dart';
-import 'package:get_it/get_it.dart';
-import 'package:isar/isar.dart';
 import 'package:nanoid/nanoid.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../i18n/translations.g.dart';
 import '../../data/database/tickets_storage_helper.dart';
 import '../enums/ticket_exception_code.dart';
 import '../models/ticket.dart';
-
-import 'package:path/path.dart' as path;
 
 class TicketsRepository {
   late final TicketStorageHelper _ticketStorage;
@@ -137,7 +130,13 @@ class TicketsRepository {
 
       for (final ticket in tickets) {
         if (ticket.filePath != null) {
-          await File(ticket.filePath!).delete();
+          try {
+            await File(ticket.filePath!).delete();
+          } on PathNotFoundException catch (e) {
+            if (e.osError?.errorCode == 2) {
+              continue;
+            }
+          }
         }
       }
     } catch (e) {

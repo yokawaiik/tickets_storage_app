@@ -1,9 +1,9 @@
 /// Generated file. Do not edit.
 ///
 /// Locales: 2
-/// Strings: 85 (42 per locale)
+/// Strings: 87 (43 per locale)
 ///
-/// Built on 2023-04-15 at 12:53 UTC
+/// Built on 2023-04-16 at 07:53 UTC
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
@@ -317,6 +317,7 @@ class TranslationsStringsStoragePageBodyListTicketItemEn {
 	String get subtitleFileDownload => 'Pending downloading';
 	String get subtitleFileError => 'Downloading error';
 	late final TranslationsStringsStoragePageBodyListTicketItemSlidableActionEn slidableAction = TranslationsStringsStoragePageBodyListTicketItemSlidableActionEn._(_root);
+	late final TranslationsStringsStoragePageBodyListTicketItemFileEn file = TranslationsStringsStoragePageBodyListTicketItemFileEn._(_root);
 }
 
 // Path: strings.storagePage.bottomAppBar.selection
@@ -366,6 +367,16 @@ class TranslationsStringsStoragePageBodyListTicketItemSlidableActionEn {
 
 	// Translations
 	String get delete => 'Delete';
+}
+
+// Path: strings.storagePage.body.listTicketItem.file
+class TranslationsStringsStoragePageBodyListTicketItemFileEn {
+	TranslationsStringsStoragePageBodyListTicketItemFileEn._(this._root);
+
+	final TranslationsEn _root; // ignore: unused_field
+
+	// Translations
+	String get doesnNotExist => 'File doesn not exist.';
 }
 
 // Path: errorStrings.features.ticketStorage.repositories.ticketsRepository.addTicket
@@ -749,6 +760,7 @@ class TranslationsStringsStoragePageBodyListTicketItemRu extends TranslationsStr
 	@override String get subtitleFileDownload => 'Ожидание загрузки';
 	@override String get subtitleFileError => 'Ошибка при загрузке';
 	@override late final TranslationsStringsStoragePageBodyListTicketItemSlidableActionRu slidableAction = TranslationsStringsStoragePageBodyListTicketItemSlidableActionRu._(_root);
+	@override late final TranslationsStringsStoragePageBodyListTicketItemFileRu file = TranslationsStringsStoragePageBodyListTicketItemFileRu._(_root);
 }
 
 // Path: strings.storagePage.bottomAppBar.selection
@@ -798,6 +810,16 @@ class TranslationsStringsStoragePageBodyListTicketItemSlidableActionRu extends T
 
 	// Translations
 	@override String get delete => 'Удалить';
+}
+
+// Path: strings.storagePage.body.listTicketItem.file
+class TranslationsStringsStoragePageBodyListTicketItemFileRu extends TranslationsStringsStoragePageBodyListTicketItemFileEn {
+	TranslationsStringsStoragePageBodyListTicketItemFileRu._(TranslationsRu root) : this._root = root, super._(root);
+
+	@override final TranslationsRu _root; // ignore: unused_field
+
+	// Translations
+	@override String get doesnNotExist => 'Файл не существует.';
 }
 
 // Path: errorStrings.features.ticketStorage.repositories.ticketsRepository.addTicket
@@ -948,6 +970,7 @@ extension on TranslationsEn {
 			case 'strings.storagePage.body.listTicketItem.subtitleFileDownload': return 'Pending downloading';
 			case 'strings.storagePage.body.listTicketItem.subtitleFileError': return 'Downloading error';
 			case 'strings.storagePage.body.listTicketItem.slidableAction.delete': return 'Delete';
+			case 'strings.storagePage.body.listTicketItem.file.doesnNotExist': return 'File doesn not exist.';
 			case 'strings.storagePage.fab.deleteSelected': return 'Delete selected';
 			case 'strings.storagePage.fab.add': return 'Add';
 			case 'strings.storagePage.bottomAppBar.selection.tooltip': return 'Select group';
@@ -998,6 +1021,7 @@ extension on TranslationsRu {
 			case 'strings.storagePage.body.listTicketItem.subtitleFileDownload': return 'Ожидание загрузки';
 			case 'strings.storagePage.body.listTicketItem.subtitleFileError': return 'Ошибка при загрузке';
 			case 'strings.storagePage.body.listTicketItem.slidableAction.delete': return 'Удалить';
+			case 'strings.storagePage.body.listTicketItem.file.doesnNotExist': return 'Файл не существует.';
 			case 'strings.storagePage.fab.deleteSelected': return 'Удалить выбранные';
 			case 'strings.storagePage.fab.add': return 'Добавить';
 			case 'strings.storagePage.bottomAppBar.selection.tooltip': return 'Выбрать несколько';

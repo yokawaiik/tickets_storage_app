@@ -7,6 +7,9 @@ class AppTheme {
         useMaterial3: true,
         primarySwatch: Colors.purple,
       );
+  ThemeData get darkTheme => ThemeData.dark(
+        useMaterial3: true,
+      );
 }
 
 class ColorConstants {

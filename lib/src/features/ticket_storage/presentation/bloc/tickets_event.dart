@@ -26,10 +26,10 @@ class RefreshTicketsEvent implements TicketsEvent {
   RefreshTicketsEvent(this.completer);
 }
 
-class DeletedTicketEvent implements TicketsEvent {
+class DeleteTicketEvent implements TicketsEvent {
   final String id;
 
-  DeletedTicketEvent({required this.id});
+  DeleteTicketEvent({required this.id});
 }
 
 class SetSelectionSingleTicketsEvent implements TicketsEvent {

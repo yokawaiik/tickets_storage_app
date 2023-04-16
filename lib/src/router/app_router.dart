@@ -19,15 +19,20 @@ class AppRouter {
           name: routes_constants.ticketsPage,
           path: routes_constants.ticketsPagePath,
           builder: (context, goRouterState) {
-            return const TicketStoragePage();
+            // final queryParams = TicketStoragePageQueryParams.fromParamsMap(
+            //     goRouterState.queryParams);
+
+            return const TicketStoragePage(
+                // queryParams: queryParams,
+                );
           },
         ),
         GoRoute(
           name: routes_constants.ticketDetailPage,
           path: routes_constants.ticketDetailPagePath,
-          builder: (context, state) {
-            final queryParams =
-                TicketDetailPageQueryParams.fromParamsMap(state.queryParams);
+          builder: (context, goRouterState) {
+            final queryParams = TicketDetailPageQueryParams.fromParamsMap(
+                goRouterState.queryParams);
 
             return TicketDetailPage(queryParams: queryParams);
           },

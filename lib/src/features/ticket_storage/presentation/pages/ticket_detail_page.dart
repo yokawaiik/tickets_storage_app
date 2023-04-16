@@ -6,6 +6,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../domain/enums/error_situation.dart';
 
@@ -47,6 +48,7 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
         return false;
       },
       builder: (context, state) {
+        print("TicketDetailPage - state: $state");
         if (state is ErrorTicketsState) {
           return Scaffold(
             body: Center(
@@ -73,9 +75,20 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
             swipeHorizontal: true,
             autoSpacing: false,
             pageFling: true,
+            onError: (error) => _handleError(context),
+            onPageError: (page, error) => _handleError(context),
           ),
         );
       },
     );
+  }
+
+  void _handleError(BuildContext context) {
+    // context.pop(
+    //   TicketStoragePageQueryParams(
+    //     ticketId: widget.queryParams.id,
+    //     isError: true,
+    //   ).toParamsMap(),
+    // );
   }
 }

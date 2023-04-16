@@ -18,7 +18,7 @@ class Ticket extends Equatable {
     isSelected = selection;
   }
 
-  void setFilePath(String filePath) {
+  void setFilePath(String? filePath) {
     this.filePath = filePath;
   }
 

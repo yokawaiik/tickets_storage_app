@@ -1,12 +1,12 @@
-# Ticket storage
+# Ticket storage (Documents storage)
 
 ## Description
 
-A small application project where the user can differentiate between different tickets (or other files). An application can be part of something bigger. such as storage for storing documents.
+A small application project where the user can differentiate between different tickets (or other files). An application can be part of something bigger such as storage for storing documents.
 
 ## Content table
 
-- [Ticket storage](#ticket-storage)
+- [Ticket storage (Documents storage)](#ticket-storage-documents-storage)
   - [Description](#description)
   - [Content table](#content-table)
   - [Platforms](#platforms)
@@ -24,21 +24,19 @@ A small application project where the user can differentiate between different t
 - IOS
 
 ## Stack
-
 - [x] Bloc state manager;
 - [x] Isar database with generators;
 - [x] get_it - service locator to dependencies management;
 - [x] go_router - navigation;
 - [x] flutter_download_manager - to manage download and show progress;
-- [ ] slang - to localize app;
+- [x] slang - to localize app;
 - [x] and others dependencies...
 
 ## Features
-
 ### Main
 - [x] App icon;
-- [ ] Settings;
-- [ ] Localization.
+- [x] Settings (with bloc and Shared Preferences);
+- [x] Localization (with slang and bloc).
 
 ### Tickets storage
 - [x] Add PDF file url;
@@ -48,7 +46,7 @@ A small application project where the user can differentiate between different t
 - [x] Bloc controlls global state where it contains handled data was got from local database;
 - [x] User can see a ticket's PDF file if it has been downloaded;
 - [x] Delete list item by swipe;
-- [x] Delete selected group items;
+- [x] Delete selected group items.
 
 ## Demonstration
 

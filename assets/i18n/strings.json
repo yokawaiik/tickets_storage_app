@@ -23,6 +23,9 @@
         "subtitleFileError": "Downloading error",
         "slidableAction": {
           "delete": "Delete"
+        },
+        "file": {
+          "doesnNotExist": "File doesn not exist."
         }
       }
     },

@@ -22,6 +22,9 @@
         "subtitleFileError": "Ошибка при загрузке",
         "slidableAction": {
           "delete": "Удалить"
+        },
+        "file": {
+          "doesnNotExist": "Файл не существует."
         }
       }
     },

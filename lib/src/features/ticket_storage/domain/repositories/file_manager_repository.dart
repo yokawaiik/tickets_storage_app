@@ -41,13 +41,15 @@ class FileManagerRepository {
     Ticket ticket,
   ) async {
     try {
-      final Directory appDocumentsDir =
-          await getApplicationDocumentsDirectory();
-      final fileName = basename(ticket.fileUrl);
+      // final Directory appDocumentsDir =
+      //     await getApplicationDocumentsDirectory();
+      // final fileName = basename(ticket.fileUrl);
 
-      final saveFilePath = '${appDocumentsDir.path}/$fileName';
+      // final saveFilePath = '${appDocumentsDir.path}/$fileName';
 
-      final task = _dm.addDownload(ticket.fileUrl, saveFilePath);
+      // final task = _dm.addDownload(ticket.fileUrl, saveFilePath);
+      final task = _dm.getDownload(ticket.fileUrl);
+
       return task;
     } catch (e) {
       debugPrint(

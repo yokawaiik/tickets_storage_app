@@ -32,6 +32,7 @@ class App extends StatelessWidget {
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             title: state.t.strings.appName,
             theme: _appTheme.theme,
+            darkTheme: _appTheme.darkTheme,
             routerConfig: _appRouter.config,
           );
         },
