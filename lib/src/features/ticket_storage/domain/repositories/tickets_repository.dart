@@ -8,6 +8,7 @@ import 'package:nanoid/nanoid.dart';
 
 import '../../../../i18n/translations.g.dart';
 import '../../data/database/tickets_storage_helper.dart';
+import '../../utils/utils.dart';
 import '../enums/ticket_exception_code.dart';
 import '../models/ticket.dart';
 
@@ -107,17 +108,25 @@ class TicketsRepository {
   Future<void> removeTicket(Ticket ticket) async {
     try {
       await _ticketStorage.removeTicket(ticket.id);
-      if (ticket.filePath != null) {
-        await File(ticket.filePath!).delete();
+
+      // try delete if file was saved
+      final pathToFile = await getPathToFile(ticket.fileUrl);
+      await File(pathToFile).exists();
+      final file = File(pathToFile);
+      if (await file.exists()) {
+        await file.delete();
       }
-    } on PathNotFoundException catch (e) {
-      // file doesn't exist
-      if (e.osError?.errorCode == 2) {
-        return;
-      }
-      debugPrint(
-          "TicketsRepository - removeTicket - PathNotFoundException - e: ${e.toString()}");
-    } catch (e) {
+    }
+    // on PathNotFoundException catch (e) {
+    //   // file doesn't exist
+    //   if (e.osError?.errorCode == 2) {
+    //     return;
+    //   }
+    //   debugPrint(
+    //       "TicketsRepository - removeTicket - PathNotFoundException - e: ${e.toString()}");
+    //   rethrow;
+    // }
+    catch (e) {
       debugPrint("TicketsRepository - removeTicket - e: ${e.toString()}");
       throw Exception(_t.errorStrings.unexpected);
     }
@@ -130,12 +139,20 @@ class TicketsRepository {
 
       for (final ticket in tickets) {
         if (ticket.filePath != null) {
-          try {
-            await File(ticket.filePath!).delete();
-          } on PathNotFoundException catch (e) {
-            if (e.osError?.errorCode == 2) {
-              continue;
-            }
+          // try {
+          //   await File(ticket.filePath!).delete();
+          // } on PathNotFoundException catch (e) {
+          //   if (e.osError?.errorCode == 2) {
+          //     continue;
+          //   }
+          // }
+
+          // try delete if file was saved
+          final pathToFile = await getPathToFile(ticket.fileUrl);
+          await File(pathToFile).exists();
+          final file = File(pathToFile);
+          if (await file.exists()) {
+            await file.delete();
           }
         }
       }

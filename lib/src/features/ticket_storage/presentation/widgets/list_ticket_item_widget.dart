@@ -252,14 +252,17 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
         widget.ticket,
       );
 
-      _downloadTask?.progress.addListener(() async {
-        if (_downloadTask!.progress.value != 1.0) return;
+      _downloadTask?.whenDownloadComplete(
+        timeout: const Duration(seconds: 30),
+      );
 
-        final Directory appDocumentsDir =
-            await getApplicationDocumentsDirectory();
-        final fileName = basename(widget.ticket.fileUrl);
+      if (_downloadTask != null) {
+        _fileStatus = _FileStatus.downloading;
+        setState(() {});
+      }
 
-        final saveFilePath = '${appDocumentsDir.path}/$fileName';
+      _downloadTask?.status.addListener(() async {
+        if (!_downloadTask!.status.value.isCompleted) return;
 
         widget.ticket.setFilePath(_downloadTask!.request.path);
 

@@ -1,18 +1,14 @@
 import 'dart:core';
-import 'dart:io';
 
-import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
+import 'package:documents_saver_app/src/features/ticket_storage/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:get_it/get_it.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../i18n/translations.g.dart';
 import '../../../settings/presentation/bloc/settings_bloc.dart';
 import '../../data/database/tickets_storage_helper.dart';
 import '../models/ticket.dart';
-
-import 'package:path/path.dart' show basename;
 
 class FileManagerRepository {
   late final TicketStorageHelper _ticketStorage;
@@ -41,14 +37,8 @@ class FileManagerRepository {
     Ticket ticket,
   ) async {
     try {
-      // final Directory appDocumentsDir =
-      //     await getApplicationDocumentsDirectory();
-      // final fileName = basename(ticket.fileUrl);
-
-      // final saveFilePath = '${appDocumentsDir.path}/$fileName';
-
-      // final task = _dm.addDownload(ticket.fileUrl, saveFilePath);
-      final task = _dm.getDownload(ticket.fileUrl);
+      final pathToFile = await getPathToFile(ticket.fileUrl);
+      final task = _dm.addDownload(ticket.fileUrl, pathToFile);
 
       return task;
     } catch (e) {
