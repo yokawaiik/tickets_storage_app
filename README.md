@@ -15,6 +15,8 @@ A small application project where the user can differentiate between different t
     - [Main](#main)
     - [Tickets storage](#tickets-storage)
   - [Demonstration](#demonstration)
+    - [Screenshots](#screenshots)
+    - [Video screencast](#video-screencast)
   - [Useful links](#useful-links)
   - [Author contacts](#author-contacts)
   - [License](#license)
@@ -49,9 +51,22 @@ A small application project where the user can differentiate between different t
 - [x] Delete selected group items.
 
 ## Demonstration
+### Screenshots
+![Main page | list items | add an item](./docs/screenshots/production/Tickets_storage-1.jpg)
+\
+\
+![select | download | open PDf](./docs/screenshots/production/Tickets_storage-2.jpg)
+\
+\
+![main page localized | settings ](./docs/screenshots/production/Tickets_storage-3.jpg)
+
+
+### Video screencast
+YouTube link:  https://youtu.be/W6iTeJqUiBc
 
 ## Useful links
 - https://m3.material.io/theme-builder#/custom
+- https://www.photoroom.com/backgrounds
 
 ## Author contacts
 Made by @yokawaiik

@@ -262,6 +262,9 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
 
         widget.ticket.setFilePath(_downloadTask!.request.path);
 
+        debugPrint("File was saved by path: ${_downloadTask!.request.path}");
+        print("File was saved by path: ${_downloadTask!.request.path}");
+
         await _fileManagerRepository.updateTicket(
           widget.ticket,
         );
@@ -277,6 +280,9 @@ class _ListTicketItemWidgetState extends State<ListTicketItemWidget> {
 
   void _openFile() async {
     late final String? message;
+
+    print("File path: ${widget.ticket.filePath}");
+
     if (widget.ticket.filePath == null) {
       message = _t.strings.storagePage.snakbarMessages.requiredSaveFile;
     } else {
