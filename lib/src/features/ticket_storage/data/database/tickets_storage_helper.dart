@@ -1,5 +1,4 @@
 import 'package:documents_saver_app/src/features/ticket_storage/domain/models/tickets_exception.dart';
-import 'package:flutter/material.dart';
 import 'package:isar/isar.dart';
 
 import '../../domain/enums/ticket_exception_code.dart';

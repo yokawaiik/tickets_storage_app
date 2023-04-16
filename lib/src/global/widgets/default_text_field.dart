@@ -2,29 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class DefaultTextField extends StatelessWidget {
-  String? labelText;
-  String? initialValue;
-  Function(String)? onChanged;
+  final String? labelText;
+  final String? initialValue;
+  final Function(String)? onChanged;
 
-  bool obscureText;
-  bool readOnly;
-  int? minLines;
-  int? maxLines;
-  int? maxLength;
-  Widget? suffixIcon;
+  final bool obscureText;
+  final bool readOnly;
+  final int? minLines;
+  final int? maxLines;
+  final int? maxLength;
+  final Widget? suffixIcon;
 
-  TextInputType? keyboardType;
+  final TextInputType? keyboardType;
 
-  TextEditingController? controller;
+  final TextEditingController? controller;
 
-  Iterable<String>? autofillHints;
-  List<TextInputFormatter>? inputFormatters;
+  final Iterable<String>? autofillHints;
+  final List<TextInputFormatter>? inputFormatters;
 
-  Icon? prefixIcon;
+  final Icon? prefixIcon;
 
-  String? Function(String?)? validator;
+  final String? Function(String?)? validator;
 
-  DefaultTextField({
+  const DefaultTextField({
     this.controller,
     this.initialValue,
     this.onChanged,

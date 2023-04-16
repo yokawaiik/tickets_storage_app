@@ -10,8 +10,6 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../global/widgets/widgets.dart';
-import '../../../../i18n/translations.g.dart';
-import '../../../../router/router.dart';
 import '../bloc/tickets_bloc.dart';
 import '../widgets/widgets.dart';
 import '../../utils/utils.dart' as utils;

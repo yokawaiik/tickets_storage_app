@@ -1,12 +1,10 @@
 import 'dart:io';
 
-import 'package:documents_saver_app/src/features/ticket_storage/presentation/bloc/tickets_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_download_manager/flutter_download_manager.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
-import 'package:path_provider/path_provider.dart';
 
 import '../../../../i18n/translations.g.dart';
 import '../../../settings/presentation/bloc/settings_bloc.dart';
@@ -14,8 +12,6 @@ import '../../domain/repositories/file_manager_repository.dart';
 
 import '../../../../theme/theme.dart';
 import '../../domain/models/ticket.dart';
-
-import 'package:path/path.dart' show basename;
 
 import '../../../../router/router.dart' as router;
 

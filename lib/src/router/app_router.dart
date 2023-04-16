@@ -1,8 +1,6 @@
 import 'package:documents_saver_app/src/router/router.dart';
-import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import '../features/settings/settings.dart';
-import '../features/ticket_storage/presentation/bloc/tickets_bloc.dart';
 import '../features/ticket_storage/ticket_storage.dart';
 
 import 'routes_constants.dart' as routes_constants;

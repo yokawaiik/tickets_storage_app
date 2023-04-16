@@ -7,8 +7,6 @@ import 'package:documents_saver_app/src/features/ticket_storage/domain/models/ti
 import 'package:documents_saver_app/src/i18n/translations.g.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
-import 'package:meta/meta.dart';
 
 import '../../domain/enums/error_situation.dart';
 import '../../domain/models/ticket.dart';

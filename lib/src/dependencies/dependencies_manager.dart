@@ -1,7 +1,6 @@
 import 'package:documents_saver_app/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
-import '../features/settings/data/storage/settings_storage.dart';
 import '../features/ticket_storage/presentation/bloc/tickets_bloc.dart';
 import '../theme/theme.dart';
 

@@ -1,12 +1,9 @@
 import 'package:documents_saver_app/src/features/ticket_storage/presentation/bloc/tickets_bloc.dart';
 import 'package:documents_saver_app/src/router/router.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:get_it/get_it.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../domain/enums/error_situation.dart';
 
@@ -48,7 +45,6 @@ class _TicketDetailPageState extends State<TicketDetailPage> {
         return false;
       },
       builder: (context, state) {
-        print("TicketDetailPage - state: $state");
         if (state is ErrorTicketsState) {
           return Scaffold(
             body: Center(
